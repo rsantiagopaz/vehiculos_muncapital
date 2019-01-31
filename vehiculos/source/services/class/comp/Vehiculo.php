@@ -228,20 +228,9 @@ class class_Vehiculo extends class_Base
   public function method_leer_movimiento($params, $error) {
   	$p = $params[0];
   	
-	function functionAux1(&$row, $key) {
-		$row->kilo = (float) $row->kilo;
-		$row->total = (float) $row->total;
-		
-		if ($row->estado == "D") $row->total = "Diferido";
-		if ($row->estado == "A") $row->total = "Anulado";
-		
-		$row->bandera_estado = ($row->estado == "A") ? -1 : 0;
-	};
+  	$resultado = array();
   	
-  	$opciones = new stdClass;
-  	$opciones->functionAux = functionAux1;
-	
-	
+
 	$sql = "SELECT * FROM (";
 	$sql.= "(SELECT movimiento.*, taller.descrip AS taller FROM movimiento LEFT JOIN taller USING(id_taller))";
 	$sql.= " UNION ALL";
@@ -256,7 +245,20 @@ class class_Vehiculo extends class_Base
 	$sql.= " WHERE id_entsal=" . $p->id_entsal;
 	$sql.= " ORDER BY f_ent DESC";
 	
-	return $this->toJson($sql, $opciones);
+	$rs = $this->mysqli->query($sql);
+	while ($row = $rs->fetch_object()) {
+		$row->kilo = (float) $row->kilo;
+		$row->total = (float) $row->total;
+		
+		if ($row->estado == "D") $row->total = "Diferido";
+		if ($row->estado == "A") $row->total = "Anulado";
+		
+		$row->bandera_estado = ($row->estado == "A") ? -1 : 0;
+		
+		$resultado[] = $row;
+	}
+	
+	return $resultado;
   }
   
   
@@ -370,7 +372,7 @@ class class_Vehiculo extends class_Base
 		$sql.= " FROM _localidades INNER JOIN _departamentos USING(departamento_id)";
 		$sql.= " WHERE localidad_id='" . $row->localidad_id . "'";
 		
-		$rsAux = $this->mysqli->query($sql);
+		$rsAux = $this->mysqli2->query($sql);
 		if ($rsAux->num_rows > 0) {
 			$rowAux = $rsAux->fetch_object();
 			$row->localidad = $rowAux->label;
@@ -433,21 +435,23 @@ class class_Vehiculo extends class_Base
   public function method_leer_entsal($params, $error) {
   	$p = $params[0];
   	
-	function functionAux1(&$row, $key) {
+  	$resultado = array();
+
+	$sql = "SELECT entsal.* FROM entsal WHERE id_vehiculo=" . $p->id_vehiculo . " ORDER BY f_ent DESC";
+	
+	$rs = $this->mysqli->query($sql);
+	while ($row = $rs->fetch_object()) {
 		$row->kilo = (float) $row->kilo;
 		$row->total = (float) $row->total;
 		
 		if ($row->estado == "A") $row->total = "Anulado";
 		
 		$row->bandera_estado = ($row->estado == "A") ? -1 : 0;
-	};
-  	
-  	$opciones = new stdClass;
-  	$opciones->functionAux = functionAux1;
-  	
-	$sql = "SELECT entsal.* FROM entsal WHERE id_vehiculo=" . $p->id_vehiculo . " ORDER BY f_ent DESC";
+		
+		$resultado[] = $row;
+	}
 	
-	return $this->toJson($sql, $opciones);
+	return $resultado;
   }
   
   
@@ -554,7 +558,7 @@ class class_Vehiculo extends class_Base
   	$p = $params[0];
 
 	$sql = "SELECT 001_documentaciones.*, 001_documentaciones_tipos.documentacion_tipo FROM 001_documentaciones INNER JOIN 001_documentaciones_tipos USING(documentacion_tipo_id) WHERE documentacion_id='" . $p->documentacion_id . "'";
-	$rs = $this->mysqli->query($sql);
+	$rs = $this->mysqli2->query($sql);
 	if ($rs->num_rows == 0) {
   		$error->SetError(0, "documentacion_id");
   		return $error;
@@ -604,7 +608,7 @@ class class_Vehiculo extends class_Base
   	
   	if (is_null($row->documentacion_id)) {
 		$sql = "SELECT documentacion_id FROM 001_documentaciones WHERE documentacion_id='" . $p->documentacion_id . "'";
-		$rs = $this->mysqli->query($sql);
+		$rs = $this->mysqli2->query($sql);
 		if ($rs->num_rows == 0) {
 	  		$error->SetError(0, "documentacion_id");
 	  		return $error;
@@ -641,7 +645,7 @@ class class_Vehiculo extends class_Base
 		$sql.= " FROM (_organismos_areas INNER JOIN _organismos USING(organismo_id))";
 		$sql.= " WHERE _organismos_areas.organismo_area_id='" . $row->organismo_area_id . "'";
 		
-		$rsDependencia = $this->mysqli->query($sql);
+		$rsDependencia = $this->mysqli2->query($sql);
 		if ($rsDependencia->num_rows > 0) {
 			$rowDependencia = $rsDependencia->fetch_object();
 			$row->dependencia = $rowDependencia->label;
@@ -695,7 +699,7 @@ class class_Vehiculo extends class_Base
 		$sql.= " FROM _localidades INNER JOIN _departamentos USING(departamento_id)";
 		$sql.= " WHERE localidad_id='" . $row->localidad_id . "'";
 		
-		$rsAux = $this->mysqli->query($sql);
+		$rsAux = $this->mysqli2->query($sql);
 		if ($rsAux->num_rows > 0) $rowAux->cboLocalidad = $rsAux->fetch_object();
 		
 

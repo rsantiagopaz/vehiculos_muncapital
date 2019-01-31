@@ -9,6 +9,9 @@ set_time_limit(0);
 $mysqli = new mysqli("$servidor", "$usuario", "$password", "$base");
 $mysqli->query("SET NAMES 'utf8'");
 
+$mysqli2 = new mysqli("$servidor2", "$usuario2", "$password2", "$base2");
+$mysqli2->query("SET NAMES 'utf8'");
+
 date_default_timezone_set("America/Argentina/Buenos_Aires");
 
 switch ($_REQUEST['rutina'])
@@ -25,9 +28,9 @@ case "general" : {
 	<body>
 	<input type="submit" value="Imprimir" onClick="window.print();"/>
 	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
-	<tr><td align="center" colspan="6"><big><b>Parque Automotor</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
-	<tr><td align="center" colspan="6"><big><b>Ministerio de la Producción, Recursos Naturales, Forestación y Tierras</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td align="center" colspan="6"><big><b>ESTADO GENERAL</b></big></td></tr>
 	<tr><td align="center" colspan="6"><big><?php echo date("Y-m-d H:i:s"); ?></big></td></tr>
@@ -176,9 +179,9 @@ case "gastos" : {
 	<body>
 	<input type="submit" value="Imprimir" onClick="window.print();"/>
 	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
-	<tr><td align="center" colspan="6"><big><b>Parque Automotor</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
-	<tr><td align="center" colspan="6"><big><b>Ministerio de la Producción, Recursos Naturales, Forestación y Tierras</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td align="center" colspan="6"><big><b>LISTADO GASTOS</b></big></td></tr>
 	<tr><td align="center" colspan="6"><big><?php echo date("Y-m-d H:i:s"); ?></big></td></tr>
@@ -298,9 +301,9 @@ case "incidentes" : {
 	<body>
 	<input type="submit" value="Imprimir" onClick="window.print();"/>
 	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
-	<tr><td align="center" colspan="6"><big><b>Parque Automotor</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
-	<tr><td align="center" colspan="6"><big><b>Ministerio de la Producción, Recursos Naturales, Forestación y Tierras</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td align="center" colspan="6"><big><b>LISTADO INCIDENTES</b></big></td></tr>
 	<tr><td align="center" colspan="6"><big><?php echo date("Y-m-d H:i:s"); ?></big></td></tr>
@@ -324,7 +327,7 @@ case "incidentes" : {
 		$sql.= " FROM (_organismos_areas INNER JOIN _organismos USING(organismo_id))";
 		$sql.= " WHERE _organismos_areas.organismo_area_id='" . $_REQUEST['organismo_area_id'] . "'";
 		
-		$rsAux = $mysqli->query($sql);
+		$rsAux = $mysqli2->query($sql);
 		if ($rsAux->num_rows > 0) {
 			$rowAux = $rsAux->fetch_object();
 			$rowAux = $rowAux->label;
@@ -407,9 +410,9 @@ case "choferes" : {
 	<body>
 	<input type="submit" value="Imprimir" onClick="window.print();"/>
 	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
-	<tr><td align="center" colspan="6"><big><b>Parque Automotor</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
-	<tr><td align="center" colspan="6"><big><b>Ministerio de la Producción, Recursos Naturales, Forestación y Tierras</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td align="center" colspan="6"><big><b>LISTADO DE CHOFERES</b></big></td></tr>
 	<tr><td align="center" colspan="6"><big><?php echo date("Y-m-d H:i:s"); ?></big></td></tr>
@@ -422,7 +425,7 @@ case "choferes" : {
 		$sql.= " FROM (_organismos_areas INNER JOIN _organismos USING(organismo_id))";
 		$sql.= " WHERE _organismos_areas.organismo_area_id='" . $_REQUEST['organismo_area_id'] . "'";
 		
-		$rsAux = $mysqli->query($sql);
+		$rsAux = $mysqli2->query($sql);
 		if ($rsAux->num_rows > 0) {
 			$rowAux = $rsAux->fetch_object();
 			$rowAux = $rowAux->label;
@@ -471,7 +474,7 @@ case "choferes" : {
 		$sql.= " FROM (_organismos_areas INNER JOIN _organismos USING(organismo_id))";
 		$sql.= " WHERE _organismos_areas.organismo_area_id='" . $row->organismo_area_id . "'";
 		
-		$rsAux = $mysqli->query($sql);
+		$rsAux = $mysqli2->query($sql);
 		if ($rsAux->num_rows > 0) {
 			$rowAux = $rsAux->fetch_object();
 			$rowAux = $rowAux->label;
@@ -533,9 +536,9 @@ case "historial" : {
 	<body>
 	<input type="submit" value="Imprimir" onClick="window.print();"/>
 	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
-	<tr><td align="center" colspan="6"><big><b>Parque Automotor</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
-	<tr><td align="center" colspan="6"><big><b>Ministerio de la Producción, Recursos Naturales, Forestación y Tierras</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td><b>Historial Vehiculo: <?php echo $rowVehiculo->nro_patente . "  " . $rowVehiculo->marca; ?></b></td></tr>
@@ -640,7 +643,7 @@ break;
 	
 case "salida_vehiculo" : {
 
-	$sql = "SELECT * FROM entsal INNER JOIN vehiculo USING(id_vehiculo) WHERE id_entsal=" . $_REQUEST['id_entsal'];
+	$sql = "SELECT entsal.*, vehiculo.*, responsable.apenom FROM entsal INNER JOIN vehiculo USING(id_vehiculo) INNER JOIN responsable USING(id_responsable) WHERE id_entsal=" . $_REQUEST['id_entsal'];
 	$rsEntsal = $mysqli->query($sql);
 	$rowEntsal = $rsEntsal->fetch_object();
 	
@@ -667,9 +670,9 @@ case "salida_vehiculo" : {
 	<body>
 	<input type="submit" value="Imprimir" onClick="window.print();"/>
 	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
-	<tr><td align="center" colspan="6"><big><b>Parque Automotor</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
-	<tr><td align="center" colspan="6"><big><b>Ministerio de la Producción, Recursos Naturales, Forestación y Tierras</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td align="center" colspan="6"><big><b>FORMULARIO DE CONFORMIDAD</b></big></td></tr>
 	<tr><td align="center" colspan="6"><big><?php echo date("Y-m-d H:i:s"); ?></big></td></tr>
@@ -678,7 +681,7 @@ case "salida_vehiculo" : {
 	<tr><td><b>Vehículo: <?php echo $rowEntsal->nro_patente . "  " . $rowEntsal->marca; ?></b></td><td>Salida: <?php echo $rowEntsal->f_sal; ?></td><td>Km: <?php echo $rowEntsal->kilo; ?></td></tr>
 	<tr><td colspan="20">Dependencia: <?php echo $rowEntsal->dependencia; ?></td></tr>
 	<tr><td>&nbsp;</td></tr>
-	<tr><td>Usuario: <?php echo $_SESSION['login']->usuario; ?></td><td>Responsable: <?php echo $rowEntsal->resp_sal; ?></td></tr>
+	<tr><td>Usuario: <?php echo $_SESSION['login']->usuario; ?></td><td>Responsable: <?php echo $rowEntsal->apenom; ?></td></tr>
 	<tr><td>&nbsp;</td></tr>
 	
 	<?php
@@ -811,9 +814,9 @@ case "entrada_taller" : {
 	<body>
 	<input type="submit" value="Imprimir" onClick="window.print();"/>
 	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
-	<tr><td align="center" colspan="6"><big><b>Parque Automotor</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
-	<tr><td align="center" colspan="6"><big><b>Ministerio de la Producción, Recursos Naturales, Forestación y Tierras</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td align="center" colspan="6"><big><b>ORDEN DE TRABAJO # <?php echo $_REQUEST['id_movimiento']; ?></b></big></td></tr>
 	<tr><td align="center" colspan="6"><big><?php echo date("d/m/Y H:i:s"); ?></big></td></tr>
@@ -1033,9 +1036,9 @@ case "vehiculos" : {
 	<body>
 	<input type="submit" value="Imprimir" onClick="window.print();"/>
 	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
-	<tr><td align="center" colspan="10"><big><b>Parque Automotor</b></big></td></tr>
+	<tr><td align="center" colspan="10"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
-	<tr><td align="center" colspan="10"><big><b>Ministerio de la Producción, Recursos Naturales, Forestación y Tierras</b></big></td></tr>
+	<tr><td align="center" colspan="10"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td align="center" colspan="10"><big><b>LISTADO DE VEHÍCULOS</b></big></td></tr>
 	<tr><td align="center" colspan="10"><big><?php echo date("Y-m-d H:i:s"); ?></big></td></tr>
@@ -1068,18 +1071,28 @@ case "vehiculos" : {
 		$sql.= "  , dependencia.descrip AS dependencia_descrip";
 		$sql.= "  , depositario.descrip AS depositario_descrip";
 		$sql.= "  , responsable.apenom";
-		$sql.= "  , CONCAT(_localidades.localidad, ' (', _departamentos.departamento, ')') AS localidad_descrip";
 		$sql.= " FROM vehiculo INNER JOIN tipo_vehiculo USING(id_tipo_vehiculo)";
 		$sql.= "  INNER JOIN dependencia USING(id_dependencia)";
 		$sql.= "  INNER JOIN depositario USING(id_depositario)";
 		$sql.= "  INNER JOIN responsable USING(id_responsable)";
-		$sql.= "  LEFT JOIN (_localidades INNER JOIN _departamentos USING(departamento_id)) ON vehiculo.localidad_id = _localidades.localidad_id COLLATE utf8_spanish_ci";
 		$sql.= " WHERE id_dependencia=" . $rowDependencia->id_dependencia;
 		$sql.= " ORDER BY nro_patente";
 		
 		$rsVehiculo = $mysqli->query($sql);
-		echo $mysqli->error;
 		while ($rowVehiculo = $rsVehiculo->fetch_object()) {
+			$sql = "SELECT";
+			$sql.= " CONCAT(_localidades.localidad, ' (', _departamentos.departamento, ')') AS localidad_descrip";
+			$sql.= " FROM _localidades INNER JOIN _departamentos USING(departamento_id)";
+			$sql.= " WHERE _localidades.localidad_id='" . $rowVehiculo->localidad_id . "'";
+			
+			$rsAux = $mysqli2->query($sql);
+			if ($rsAux->num_rows > 0) {
+				$rowAux = $rsAux->fetch_object();
+				
+				$rowVehiculo->localidad_descrip = $rowAux->localidad_descrip;
+			}
+			
+			
 			?>
 
 			<tr><td><?php echo "Patente: " . $rowVehiculo->nro_patente; ?></td><td><?php echo "Marca: " . $rowVehiculo->marca; ?></td><td><?php echo "Tipo: " . $rowVehiculo->tipo_vehiculo_descrip; ?></td></tr>

@@ -2,7 +2,7 @@
 
 class class_ControlAcceso
 {
-	protected $mysqli;
+	protected $mysqli2;
 	
 	function __construct() {
 		require('Conexion.php');
@@ -19,8 +19,8 @@ class class_ControlAcceso
 		$aux = new mysqli_driver;
 		$aux->report_mode = MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT;
 		
-		$this->mysqli = new mysqli("$servidor", "$usuario", "$password", "$base");
-		$this->mysqli->query("SET NAMES 'utf8'");
+		$this->mysqli2 = new mysqli("$servidor2", "$usuario2", "$password2", "$base2");
+		$this->mysqli2->query("SET NAMES 'utf8'");
 	}
 
 
@@ -37,21 +37,34 @@ class class_ControlAcceso
   	require('Conexion.php');
   	
   	$resultado = array();
-  	
-		
+
+
 	$sql = "SELECT SYSusuario, sistema_id FROM _sistemas_usuarios WHERE SYSusuario='" . $p->usuario . "' AND sistema_id='017'";
-	$rs = $this->mysqli->query($sql);
+	$rs = $this->mysqli2->query($sql);
 	
 	if ($rs->num_rows == 1) {
 	
 		$sql = "SELECT * FROM _usuarios";
 		$sql.= " LEFT JOIN _organismos_areas_usuarios ON _organismos_areas_usuarios.SYSusuario = _usuarios.SYSusuario";
 		$sql.= " LEFT JOIN _organismos_areas ON _organismos_areas.organismo_area_id = _organismos_areas_usuarios.organismo_area_id";
+		$sql.= " LEFT JOIN _organismos ON _organismos.organismo_id = _organismos_areas.organismo_id";
+		$sql.= " WHERE _organismos_areas_usuarios.organismo_area_id='OYZQM' AND _usuarios.SYSusuario = BINARY '" . $p->usuario . "' AND _usuarios.SYSpassword = '" . md5($p->password) . "' AND _usuarios.SYSusuario_estado=1";
+		
+		
+		
+		/*
+		$sql = "SELECT * FROM _usuarios";
+		$sql.= " LEFT JOIN _organismos_areas_usuarios ON _organismos_areas_usuarios.SYSusuario = _usuarios.SYSusuario";
+		$sql.= " LEFT JOIN _organismos_areas ON _organismos_areas.organismo_area_id = _organismos_areas_usuarios.organismo_area_id";
 		$sql.= " INNER JOIN parque ON BINARY parque.organismo_area_id = BINARY _organismos_areas_usuarios.organismo_area_id";
 		$sql.= " LEFT JOIN _organismos ON _organismos.organismo_id = _organismos_areas.organismo_id";
 		$sql.= " WHERE _usuarios.SYSusuario = BINARY '" . $p->usuario . "' AND _usuarios.SYSpassword = '" . md5($p->password) . "' AND _usuarios.SYSusuario_estado=1";
+		*/
 		
-		$rs = $this->mysqli->query($sql);
+		
+		
+		
+		$rs = $this->mysqli2->query($sql);
 		if ($rs->num_rows > 0) {
 			while ($row = $rs->fetch_object()) {
 				$rowAux = new stdClass;

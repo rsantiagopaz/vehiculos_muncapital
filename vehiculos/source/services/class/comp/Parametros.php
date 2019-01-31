@@ -4,6 +4,45 @@ require("Base.php");
 
 class class_Parametros extends class_Base
 {
+	
+	
+	
+  public function method_alta_modifica_taller($params, $error) {
+  	$p = $params[0];
+  	
+  	$sql = "SELECT id_taller FROM taller WHERE descrip='" . $p->model->descrip . "' AND id_taller <> " . $p->model->id_taller;
+  	$rs = $this->mysqli->query($sql);
+  	if ($rs->num_rows > 0) {
+  		$error->SetError(0, "descrip");
+  		return $error;
+  	}
+  	$sql = "SELECT id_taller FROM taller WHERE cuit='" . $p->model->cuit . "' AND id_taller <> " . $p->model->id_taller;
+  	$rs = $this->mysqli->query($sql);
+  	if ($rs->num_rows > 0) {
+  		$error->SetError(0, "cuit");
+  		return $error;
+  	}
+  	
+	$id_taller = $p->model->id_taller;
+	
+	$set = $this->prepararCampos($p->model, "taller");
+		
+	if ($id_taller == "0") {
+		$sql = "INSERT taller SET " . $set;
+		$this->mysqli->query($sql);
+		
+		$id_taller = $this->mysqli->insert_id;
+		
+		$this->auditoria($sql, $id_taller, "insert_taller");
+	} else {
+		$sql = "UPDATE taller SET " . $set . " WHERE id_taller=" . $id_taller;
+		$this->mysqli->query($sql);
+		
+		$this->auditoria($sql, $id_taller, "update_taller");
+	}
+	
+	return $id_taller;
+  }
 
 
   public function method_autocompletarTipoReparacion($params, $error) {
@@ -80,13 +119,13 @@ class class_Parametros extends class_Base
   
   
   public function method_leer_taller($params, $error) {
-	$sql = "SELECT";
-	$sql.= "  id_taller";
-	$sql.= ", CONCAT(taller.descrip, ' (', cuit, ')') AS descrip";
-	$sql.= " FROM taller";
-	$sql.= " ORDER BY descrip";
+  	$p = $params[0];
+  	
+	$sql = "SELECT * FROM taller WHERE id_taller=" . $p->id_taller;
+	$rs = $this->mysqli->query($sql);
+	$row = $rs->fetch_object();
 	
-	return $this->toJson($sql);
+	return $row;
   }
   
   
@@ -128,7 +167,7 @@ class class_Parametros extends class_Base
 		$sql.= " FROM (_organismos_areas INNER JOIN _organismos USING(organismo_id))";
 		$sql.= " WHERE _organismos_areas.organismo_area_id='" . $row->organismo_area_id . "'";
 		
-		$rsDependencia = $this->mysqli->query($sql);
+		$rsDependencia = $this->mysqli2->query($sql);
 		if ($rsDependencia->num_rows > 0) {
 			$rowDependencia = $rsDependencia->fetch_object();
 			$row->dependencia = $rowDependencia->label;
@@ -145,10 +184,17 @@ class class_Parametros extends class_Base
   
   public function method_autocompletarLocalidad($params, $error) {
   	$p = $params[0];
+  	
+  	$resultado = array();
 
 	$sql = "SELECT CONCAT(localidad, ' (', departamento, ')') AS label, localidad_id AS model FROM _localidades INNER JOIN _departamentos USING(departamento_id) WHERE localidad LIKE '%" . $p->texto . "%' ORDER BY label";
 	
-	return $this->toJson($sql);
+	$rs = $this->mysqli2->query($sql);
+	while ($row = $rs->fetch_object()) {
+		$resultado[] = $row;
+	}
+	
+	return $resultado;
   }
 }
 

@@ -128,7 +128,7 @@ class class_Chofer extends class_Base
 		$sql.= " FROM (_organismos_areas INNER JOIN _organismos USING(organismo_id))";
 		$sql.= " WHERE _organismos_areas.organismo_area_id='" . $row->organismo_area_id . "'";
 		
-		$rsDependencia = $this->mysqli->query($sql);
+		$rsDependencia = $this->mysqli2->query($sql);
 		if ($rsDependencia->num_rows > 0) $rowAux->cboDependencia = $rsDependencia->fetch_object();
 
 		$row = $rowAux;

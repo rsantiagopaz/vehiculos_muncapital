@@ -140,7 +140,7 @@ qx.Class.define("vehiculos.comp.pageGeneral",
 	
 	
 	
-	var mnbVer = new qx.ui.form.MenuButton("Todos", "qx/decoration/Simple/arrows/down.gif", mnuVer);
+	var mnbVer = new qx.ui.form.MenuButton("Todos", "vehiculos/down.gif", mnuVer);
 	mnbVer.setWidth(400);
 	this.add(mnbVer, {left: 250, top: 0});
 	
