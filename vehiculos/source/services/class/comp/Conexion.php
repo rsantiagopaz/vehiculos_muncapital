@@ -21,10 +21,10 @@ $password = "U@P330551";
 $base = "vehiculos";
 
 
-$servidor2 = "www.santiagociudad.gov.ar";
-$usuario2 = "jorge";
-$password2 = "j0rg3abc";
-$base2 = "intranet_entrenamiento";
+$servidor2 = "172.16.1.251";
+$usuario2 = "UD330550";
+$password2 = "U@P330551";
+$base2 = "intranet";
 */
 
 ?>

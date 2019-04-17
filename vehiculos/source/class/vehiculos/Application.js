@@ -65,7 +65,6 @@ qx.Class.define("vehiculos.Application",
 	
       doc.set({blockerColor: '#bfbfbf', blockerOpacity: 0.4});
       
-      this.perfil = "063001";
     
       
       var win = new vehiculos.comp.windowLogin();
