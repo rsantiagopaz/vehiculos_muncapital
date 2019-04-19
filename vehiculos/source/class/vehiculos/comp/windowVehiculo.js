@@ -137,7 +137,7 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 	
 	
 	var cboVehiculo = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Vehiculo", methodName: "autocompletarVehiculoCompleto"});
-	cboVehiculo.setWidth(175);
+	cboVehiculo.setWidth(330);
 	var lstVehiculo = cboVehiculo.getChildControl("list");
 	lstVehiculo.addListener("changeSelection", function(e){
 		var datos, modelForm;
@@ -261,12 +261,22 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 	});
 	formInfoVehiculo.add(txtNro_patente, "Nro.patente", null, "nro_patente", null, {tabIndex: 3, item: {row: 1, column: 1, colSpan: 4}});
 	
+	
+	aux = new qx.ui.form.TextField();
+	aux.setRequired(true);
+	aux.addListener("blur", function(e){
+		var value = this.getValue();
+		this.setValue((value == null) ? "" : value.trim());
+	});
+	formInfoVehiculo.add(aux, "Nro.chasis", null, "nro_chasis", null, {item: {row: 2, column: 1, colSpan: 6}});
+	
+	
 	var aux = new qx.ui.form.TextField();
 	aux.addListener("blur", function(e){
 		var value = this.getValue();
 		this.setValue((value == null) ? "" : value.trim());
 	});
-	formInfoVehiculo.add(aux, "Marca", null, "marca", null, {item: {row: 2, column: 1, colSpan: 8}});
+	formInfoVehiculo.add(aux, "Marca", null, "marca", null, {item: {row: 3, column: 1, colSpan: 8}});
 	
 
 	aux = new qx.ui.form.SelectBox();
@@ -281,7 +291,7 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 		aux.add(new qx.ui.form.ListItem(resultado[x].label, null, resultado[x].model));
 	}
 	
-	formInfoVehiculo.add(aux, "Tipo", null, "id_tipo_vehiculo", null, {item: {row: 3, column: 1, colSpan: 8}});
+	formInfoVehiculo.add(aux, "Tipo", null, "id_tipo_vehiculo", null, {item: {row: 4, column: 1, colSpan: 8}});
 
 	
 	aux = new qx.ui.form.TextField();
@@ -289,22 +299,15 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 		var value = this.getValue();
 		this.setValue((value == null) ? "" : value.trim());
 	});
-	formInfoVehiculo.add(aux, "Modelo (año)", null, "modelo", null, {item: {row: 4, column: 1, colSpan: 2}});
+	formInfoVehiculo.add(aux, "Modelo (año)", null, "modelo", null, {item: {row: 5, column: 1, colSpan: 2}});
 	
 	aux = new qx.ui.form.TextField();
 	aux.addListener("blur", function(e){
 		var value = this.getValue();
 		this.setValue((value == null) ? "" : value.trim());
 	});
-	formInfoVehiculo.add(aux, "Nro.motor", null, "nro_motor", null, {item: {row: 5, column: 1, colSpan: 6}});
+	formInfoVehiculo.add(aux, "Nro.motor", null, "nro_motor", null, {item: {row: 6, column: 1, colSpan: 6}});
 	
-	aux = new qx.ui.form.TextField();
-	aux.setRequired(true);
-	aux.addListener("blur", function(e){
-		var value = this.getValue();
-		this.setValue((value == null) ? "" : value.trim());
-	});
-	formInfoVehiculo.add(aux, "Nro.chasis", null, "nro_chasis", null, {item: {row: 6, column: 1, colSpan: 6}});
 	
 	aux = new qx.ui.form.TextArea();
 	aux.addListener("blur", function(e){
@@ -323,6 +326,7 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 	
 	
 	var cboLocalidad = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Parametros", methodName: "autocompletarLocalidad"});
+	cboLocalidad.setRequired(true);
 	formInfoVehiculo.add(cboLocalidad, "Localidad", function(value) {
 		if (lstLocalidad.isSelectionEmpty()) throw new qx.core.ValidationError("Validation Error", "Debe seleccionar localidad");
 	}, "cboLocalidad", null, {item: {row: 9, column: 1, colSpan: 13}});

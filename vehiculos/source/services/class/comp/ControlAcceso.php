@@ -2,7 +2,7 @@
 
 class class_ControlAcceso
 {
-	protected $mysqli2;
+	protected $mysqli;
 	
 	function __construct() {
 		require('Conexion.php');
@@ -19,8 +19,8 @@ class class_ControlAcceso
 		$aux = new mysqli_driver;
 		$aux->report_mode = MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT;
 		
-		$this->mysqli2 = new mysqli("$servidor2", "$usuario2", "$password2", "$base2");
-		$this->mysqli2->query("SET NAMES 'utf8'");
+		$this->mysqli = new mysqli("$servidor2", "$usuario2", "$password2", "$base2");
+		$this->mysqli->query("SET NAMES 'utf8'");
 	}
 
 
@@ -34,13 +34,11 @@ class class_ControlAcceso
   public function method_traer_areas($params, $error) {
   	$p = $params[0];
   	
-  	require('Conexion.php');
-  	
   	$resultado = array();
 
 
 	$sql = "SELECT SYSusuario, sistema_id FROM _sistemas_usuarios WHERE SYSusuario='" . $p->usuario . "' AND sistema_id='017'";
-	$rs = $this->mysqli2->query($sql);
+	$rs = $this->mysqli->query($sql);
 	
 	if ($rs->num_rows == 1) {
 	
@@ -64,7 +62,7 @@ class class_ControlAcceso
 		
 		
 		
-		$rs = $this->mysqli2->query($sql);
+		$rs = $this->mysqli->query($sql);
 		if ($rs->num_rows > 0) {
 			while ($row = $rs->fetch_object()) {
 				$rowAux = new stdClass;
