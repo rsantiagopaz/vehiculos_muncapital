@@ -182,6 +182,22 @@ class class_Parametros extends class_Base
   }
   
   
+  public function method_autocompletarDepartamento($params, $error) {
+  	$p = $params[0];
+  	
+  	$resultado = array();
+
+	$sql = "SELECT departamento AS label, departamento_id AS model FROM _departamentos WHERE departamento LIKE '%" . $p->texto . "%' ORDER BY label";
+	
+	$rs = $this->mysqli2->query($sql);
+	while ($row = $rs->fetch_object()) {
+		$resultado[] = $row;
+	}
+	
+	return $resultado;
+  }
+  
+  
   public function method_autocompletarLocalidad($params, $error) {
   	$p = $params[0];
   	

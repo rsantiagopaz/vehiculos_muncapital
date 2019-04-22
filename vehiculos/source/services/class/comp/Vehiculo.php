@@ -62,7 +62,7 @@ class class_Vehiculo extends class_Base
 	  	$rs = $this->mysqli->query($sql);
 	  	$row = $rs->fetch_object();
 	  	
-	  	$sql = "UPDATE movimiento SET total=" . $row->total . " WHERE id_movimiento=" . $id_movimiento;
+	  	$sql = "UPDATE movimiento SET total='" . $row->total . "' WHERE id_movimiento=" . $id_movimiento;
 	  	$this->mysqli->query($sql);
   	}
 
@@ -71,7 +71,7 @@ class class_Vehiculo extends class_Base
   	$rs = $this->mysqli->query($sql);
   	$row = $rs->fetch_object();
   	
-  	$sql = "UPDATE entsal SET total=" . $row->total . " WHERE id_entsal=" . $id_entsal;
+  	$sql = "UPDATE entsal SET total='" . $row->total . "' WHERE id_entsal=" . $id_entsal;
   	$this->mysqli->query($sql);
   	
   	
@@ -88,7 +88,7 @@ class class_Vehiculo extends class_Base
   	$rs = $this->mysqli->query($sql);
   	$row = $rs->fetch_object();
   	
-  	$sql = "UPDATE vehiculo SET total=" . $row->total . " WHERE id_vehiculo=" . $id_vehiculo;
+  	$sql = "UPDATE vehiculo SET total='" . $row->total . "' WHERE id_vehiculo=" . $id_vehiculo;
   	$this->mysqli->query($sql);
   }
   

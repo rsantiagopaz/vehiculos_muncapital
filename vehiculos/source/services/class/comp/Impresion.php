@@ -164,6 +164,143 @@ break;
 
 case "gastos" : {
 	
+	if (isset($_REQUEST['id_dependencia'])) {
+		$sql = "SELECT descrip FROM dependencia WHERE id_dependencia=" . $_REQUEST['id_dependencia'];
+		$rsDependencia = $mysqli->query($sql);
+		$rowDependencia = $rsDependencia->fetch_object();
+	}
+	
+	?>
+	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+		<title>Gastos</title>
+	</head>
+	<body>
+	<input type="submit" value="Imprimir" onClick="window.print();"/>
+	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
+	<tr><td align="center" colspan="6"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td align="center" colspan="6"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td align="center" colspan="6"><big><b>LISTADO GASTOS</b></big></td></tr>
+	<tr><td align="center" colspan="6"><big><?php echo date("Y-m-d H:i:s"); ?></big></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td align="center" colspan="6"><big>Período: <?php echo $_REQUEST['desde'] . " / " . $_REQUEST['hasta']; ?></big></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	
+	<?php
+	if (isset($_REQUEST['id_dependencia'])) {
+		?>
+		<tr><td align="center" colspan="10"><big><b>Dependencia: <?php echo $rowDependencia->descrip; ?></b></big></td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<?php
+	}
+	?>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td colspan="20">
+	<table border="1" rules="all" cellpadding="5" cellspacing="0" width="100%" align="center">
+	<thead>
+	<tr><th>Vehículo</th><th>#</th><th>Taller</th>
+	
+	<?php
+	if (! isset($_REQUEST['id_dependencia'])) {
+		?>
+		<th>Dependencia</th>
+		<?php
+	}
+	?>
+	
+	<th>Salida</th><th>Total</th></tr>
+	</thead>
+	<tbody>
+	<?php
+	
+	$total = 0;
+	
+
+
+	
+	$sql = "SELECT * FROM(";
+	$sql.= "(SELECT movimiento.*, taller.descrip AS taller, vehiculo.nro_patente, vehiculo.nro_chasis, vehiculo.marca, dependencia.id_dependencia, dependencia.descrip AS dependencia_descrip FROM (((movimiento INNER JOIN taller USING(id_taller)) INNER JOIN entsal USING(id_entsal)) INNER JOIN vehiculo USING(id_vehiculo)) INNER JOIN dependencia USING(id_dependencia))";
+	$sql.= " UNION ALL";
+	$sql.= "(SELECT movimiento.*, temporal_1.descrip AS taller, vehiculo.nro_patente, vehiculo.nro_chasis, vehiculo.marca, dependencia.id_dependencia, dependencia.descrip AS dependencia_descrip FROM (((movimiento INNER JOIN ";
+		$sql.= "(";
+		$sql.= "SELECT";
+		$sql.= "  0 AS id_taller";
+		$sql.= ", 'Parque Automotor' AS descrip";
+		$sql.= ") AS temporal_1";
+	$sql.= " USING(id_taller)) INNER JOIN entsal USING(id_entsal)) INNER JOIN vehiculo USING(id_vehiculo)) INNER JOIN dependencia USING(id_dependencia))";
+	$sql.= ") AS temporal_2";
+	$sql.= " WHERE estado='S'";
+	
+	if (isset($_REQUEST['id_dependencia'])) $sql.= " AND id_dependencia=" . $_REQUEST['id_dependencia'];
+	if (isset($_REQUEST['desde'])) $sql.= " AND DATE(f_sal) >= '" . $_REQUEST['desde'] . "'";
+	if (isset($_REQUEST['hasta'])) $sql.= " AND DATE(f_sal) <= '" . $_REQUEST['hasta'] . "'";
+	
+	$sql.= " ORDER BY f_ent DESC";
+	
+	$rs = $mysqli->query($sql);
+	while ($row = $rs->fetch_object()) {
+		$row->total = (float) $row->total;
+		$total+= $row->total;
+		
+		$aux = array();
+		if (! empty($row->nro_patente)) $aux[] = "n.p. " . $row->nro_patente;
+		if (! empty($row->nro_chasis)) $aux[] = "n.ch. " . $row->nro_chasis;
+		if (! empty($row->marca)) $aux[] = $row->marca;
+		$row->vehiculo = implode(", ", $aux);
+		
+		
+		?>
+		<tr>
+		<td><?php echo $row->vehiculo; ?></td>
+		<td><?php echo $row->id_movimiento; ?></td>
+		<td><?php echo $row->taller; ?></td>
+		<?php
+		if (! isset($_REQUEST['id_dependencia'])) {
+			?>
+			<td><?php echo $row->dependencia_descrip; ?></td>
+			<?php
+		}
+		?>
+		<td><?php echo $row->f_sal; ?></td>
+		<td align="right"><?php echo number_format($row->total, 2, ",", "."); ?></td>
+		</tr>
+		<?php
+	}
+	?>
+	
+	<?php
+	if (! isset($_REQUEST['id_dependencia'])) {
+		?>
+		<tr><td colspan="6" align="right"><?php echo number_format($total, 2, ",", "."); ?></td></tr>
+		<?php
+	} else {
+		?>
+		<tr><td colspan="5" align="right"><?php echo number_format($total, 2, ",", "."); ?></td></tr>
+		<?php
+	}
+	?>
+	
+
+	</tbody>
+	</table>
+	</td></tr>
+	</table>
+	</body>
+	</html>
+	<?php
+	
+break;
+}
+
+
+
+case "gastos" : {
+	
 	if (isset($_REQUEST['cod_up'])) {
 		$sql = "SELECT CONCAT(REPLACE(codigo, '-', ''), ' - ', nombre) AS descrip FROM unipresu WHERE cod_up=" . $_REQUEST['cod_up'];
 		$rsUnipresu = $mysqli->query($sql);
@@ -1024,6 +1161,165 @@ break;
 
 
 
+case "vehiculos" : {
+	
+	?>
+	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+		<title>Vehículos</title>
+	</head>
+	<body>
+	<input type="submit" value="Imprimir" onClick="window.print();"/>
+	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
+	<tr><td align="center" colspan="10"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td align="center" colspan="10"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td align="center" colspan="10"><big><b>LISTADO DE VEHÍCULOS</b></big></td></tr>
+	<tr><td align="center" colspan="10"><big><?php echo date("Y-m-d H:i:s"); ?></big></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<?php
+	
+	if (isset($_REQUEST['id_dependencia'])) {
+		$sql = "SELECT";
+		$sql.= "  *";
+		$sql.= " FROM dependencia";
+		$sql.= " WHERE id_dependencia=" . $_REQUEST['id_dependencia'];
+		
+		$rsAux = $mysqli->query($sql);
+		$rowAux = $rsAux->fetch_object();
+		
+		?>
+		<tr><td align="center" colspan="6"><big><b><?php echo "Dependencia: " . $rowAux->descrip; ?></b></big></td></tr>
+		<?php
+	}
+	if (isset($_REQUEST['id_tipo_vehiculo'])) {
+		$sql = "SELECT";
+		$sql.= "  *";
+		$sql.= " FROM tipo_vehiculo";
+		$sql.= " WHERE id_tipo_vehiculo=" . $_REQUEST['id_tipo_vehiculo'];
+		
+		$rsAux = $mysqli->query($sql);
+		$rowAux = $rsAux->fetch_object();
+		
+		?>
+		<tr><td align="center" colspan="6"><big><b><?php echo "Tipo vehículo: " . $rowAux->descrip; ?></b></big></td></tr>
+		<?php
+	}
+	if (isset($_REQUEST['departamento_id'])) {
+		$sql = "SELECT";
+		$sql.= "  *";
+		$sql.= " FROM _departamentos";
+		$sql.= " WHERE departamento_id=" . $_REQUEST['departamento_id'];
+		
+		$rsAux = $mysqli2->query($sql);
+		$rowAux = $rsAux->fetch_object();
+		
+		?>
+		<tr><td align="center" colspan="6"><big><b><?php echo "Departamento: " . $rowAux->departamento; ?></b></big></td></tr>
+		<?php
+	}
+	
+	?>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<?php
+	
+	$sql = "SELECT";
+	$sql.= " DISTINCTROW";
+	$sql.= "  dependencia.*";
+	$sql.= " FROM dependencia INNER JOIN vehiculo USING(id_dependencia)";
+	if (isset($_REQUEST['id_dependencia'])) {
+		$sql.= " WHERE dependencia.id_dependencia=" . $_REQUEST['id_dependencia'];
+	}
+	$sql.= " ORDER BY descrip";
+	
+	$rsDependencia = $mysqli->query($sql);
+	while ($rowDependencia = $rsDependencia->fetch_object()) {
+		?>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td align="center" colspan="6"><?php echo "Dependencia: " . $rowDependencia->descrip; ?></td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td colspan="10"><hr></td></tr>
+		
+		<tr><td align="center" colspan="10">
+		<table border="0" cellpadding="5" cellspacing="0" width="100%" align="center">
+		
+		<?php
+		
+		$sql = "SELECT";
+		$sql.= "  vehiculo.*";
+		$sql.= "  , tipo_vehiculo.descrip AS tipo_vehiculo_descrip";
+		$sql.= "  , dependencia.descrip AS dependencia_descrip";
+		$sql.= "  , depositario.descrip AS depositario_descrip";
+		$sql.= "  , responsable.apenom";
+		//$sql.= "  , CONCAT(_localidades.localidad, ' (', _departamentos.departamento, ')') AS localidad_descrip";
+		$sql.= " FROM vehiculo INNER JOIN tipo_vehiculo USING(id_tipo_vehiculo)";
+		$sql.= "  INNER JOIN dependencia USING(id_dependencia)";
+		$sql.= "  INNER JOIN depositario USING(id_depositario)";
+		$sql.= "  INNER JOIN responsable USING(id_responsable)";
+		//$sql.= "  LEFT JOIN (_localidades INNER JOIN _departamentos USING(departamento_id)) ON vehiculo.localidad_id = _localidades.localidad_id COLLATE utf8_spanish_ci";
+		$sql.= " WHERE id_dependencia=" . $rowDependencia->id_dependencia;
+		if (isset($_REQUEST['id_tipo_vehiculo'])) {
+			$sql.= " AND vehiculo.id_tipo_vehiculo=" . $_REQUEST['id_tipo_vehiculo'];
+		}
+		$sql.= " ORDER BY nro_patente, nro_chasis, marca";
+		
+		$rsVehiculo = $mysqli->query($sql);
+		while ($rowVehiculo = $rsVehiculo->fetch_object()) {
+			$sql = "SELECT";
+			$sql.= " localidad_id, departamento_id, CONCAT(_localidades.localidad, ' (', _departamentos.departamento, ')') AS localidad_descrip";
+			$sql.= " FROM _localidades INNER JOIN _departamentos USING(departamento_id)";
+			$sql.= " WHERE _localidades.localidad_id='" . $rowVehiculo->localidad_id . "'";
+			
+			$rsLocalidad = $mysqli2->query($sql);
+			if ($rsLocalidad->num_rows > 0) {
+				$rowLocalidad = $rsLocalidad->fetch_object();
+				
+				$rowVehiculo->localidad_descrip = $rowLocalidad->localidad_descrip;
+			} else {
+				$rowLocalidad = new stdClass;
+				$rowLocalidad->departamento_id = null;
+			}
+
+			if (isset($_REQUEST['departamento_id'])) {
+				if ($rowLocalidad->departamento_id != $_REQUEST['departamento_id']) continue;
+			}			
+			
+			
+			?>
+
+			<tr><td><?php echo "Nro.patente: " . $rowVehiculo->nro_patente; ?></td><td><?php echo "Nro.chasis: " . $rowVehiculo->nro_chasis; ?></td><td><?php echo "Marca: " . $rowVehiculo->marca; ?></td></tr>
+			<tr><td><?php echo "Tipo: " . $rowVehiculo->tipo_vehiculo_descrip; ?></td><td><?php echo "Modelo: " . $rowVehiculo->modelo; ?></td><td><?php echo "Nro.motor: " . $rowVehiculo->nro_motor; ?></td></tr>
+			<tr><td><?php echo "Obs.: " . $rowVehiculo->observa; ?></td><td><?php echo "Nro.seg./pol.: " . $rowVehiculo->nro_poliza; ?></td><td><?php echo "Localidad: " . $rowVehiculo->localidad_descrip; ?></td></tr>
+			<tr><td><?php echo "Dependencia: " . $rowVehiculo->dependencia_descrip; ?></td><td><?php echo "Depositario: " . $rowVehiculo->depositario_descrip; ?></td><td><?php echo "Responsable: " . $rowVehiculo->apenom; ?></td></tr>
+			<tr><td colspan="10"><hr></td></tr>
+			
+			<?php
+		}
+		
+		?>
+		
+		</table>
+		</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		
+		<?php
+	}
+		
+	?>
+	</table>
+	</body>
+	</html>
+	<?php
+	
+break;
+}
+
+
+
 
 case "vehiculos" : {
 	
@@ -1109,6 +1405,106 @@ case "vehiculos" : {
 		</table>
 		</td></tr>
 		<tr><td>&nbsp;</td></tr>
+		
+		<?php
+	}
+		
+	?>
+	</table>
+	</body>
+	</html>
+	<?php
+	
+break;
+}
+
+
+case "responsables" : {
+	
+	?>
+	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+		<title>Responsables</title>
+	</head>
+	<body>
+	<input type="submit" value="Imprimir" onClick="window.print();"/>
+	<table border="0" cellpadding="5" cellspacing="0" width="800" align="center">
+	<tr><td align="center" colspan="10"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td align="center" colspan="10"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td align="center" colspan="10"><big><b>LISTADO DE RESPONSABLES</b></big></td></tr>
+	<tr><td align="center" colspan="10"><big><?php echo date("Y-m-d H:i:s"); ?></big></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<?php
+	
+	if (isset($_REQUEST['id_responsable'])) {
+		$sql = "SELECT";
+		$sql.= "  *";
+		$sql.= " FROM responsable";
+		$sql.= " WHERE id_responsable=" . $_REQUEST['id_responsable'];
+		
+		$rsAux = $mysqli->query($sql);
+		$rowAux = $rsAux->fetch_object();
+		
+		?>
+		<tr><td align="center" colspan="6"><big><b><?php echo "Responsable: " . $rowAux->apenom; ?></b></big></td></tr>
+		<?php
+	}
+	
+	?>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td colspan="10"><hr></td></tr>
+	<?php
+
+	
+	$sql = "SELECT";
+	$sql.= " *";
+	$sql.= " FROM responsable";
+	if (isset($_REQUEST['id_responsable'])) {
+		$sql.= " WHERE id_responsable=" . $_REQUEST['id_responsable'];
+	}
+	$sql.= " ORDER BY apenom";
+	
+	$rsResponsable = $mysqli->query($sql);
+	while ($rowResponsable = $rsResponsable->fetch_object()) {
+		?>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td colspan="10"><?php echo "Responsable: " . $rowResponsable->apenom; ?></td></tr>
+		<tr><td><?php echo "DNI: " . $rowResponsable->dni; ?></td><td><?php echo "Domicilio: " . $rowResponsable->domicilio; ?></td><td><?php echo "Localidad: " . $rowResponsable->localidad; ?></td></tr>
+		<tr><td><?php echo "Telef.: " . $rowResponsable->telefono; ?></td><td><?php echo "Cargo: " . $rowResponsable->cargo; ?></td><td><?php echo "Organización: " . $rowResponsable->organizacion; ?></td></tr>
+		
+		
+		<?php
+		
+		$sql = "SELECT";
+		$sql.= " *";
+		$sql.= " FROM vehiculo";
+		$sql.= " WHERE id_responsable=" . $rowResponsable->id_responsable;
+		$sql.= " ORDER BY nro_patente, nro_chasis, marca";
+		
+		$rsVehiculo = $mysqli->query($sql);
+		if ($rsVehiculo->num_rows > 0) {
+				?>
+				
+				<tr><td>&nbsp;</td></tr>
+				<tr><th>Nro.patente</th><th>Nro.chasis</th><th>Marca</th></tr>
+				
+				<?php
+			while ($rowVehiculo = $rsVehiculo->fetch_object()) {
+				?>
+				
+				<tr><td><?php echo $rowVehiculo->nro_patente; ?></td><td><?php echo $rowVehiculo->nro_chasis; ?></td><td><?php echo $rowVehiculo->marca; ?></td></tr>
+				
+				<?php
+			}
+		}
+		
+		?>
+		
+		<tr><td>&nbsp;</td></tr>
+		<tr><td colspan="10"><hr></td></tr>
 		
 		<?php
 	}
