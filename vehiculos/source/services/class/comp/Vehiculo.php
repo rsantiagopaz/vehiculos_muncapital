@@ -4,6 +4,46 @@ require("Base.php");
 
 class class_Vehiculo extends class_Base
 {
+	
+	
+	
+  public function method_pasar($params, $error) {
+
+
+	$sql = "SELECT * FROM prueba.table1";
+	
+	$rs = $this->mysqli->query($sql);
+	while ($row = $rs->fetch_object()) {
+		$row->id_dependencia = (int) $row->id_dependencia;
+		//if ($row->id_dependencia > 0) $row->id_dependencia = "'" . $row->id_dependencia . "'"; else $row->id_dependencia = "NULL";
+		
+		$row->Dominio = trim($row->Dominio);
+		$row->Motor = trim($row->Motor);
+		$row->Modelo = trim($row->Modelo);
+		$row->Marca = trim($row->Marca);
+		$row->Chasis = trim($row->Chasis);
+		
+		
+		if (! empty($row->Dominio) && $row->id_dependencia > 0) {
+			$sql = "INSERT prueba.vehiculo SET";
+			$sql.= "  nro_patente='" . $row->Dominio . "'";
+			$sql.= ", nro_motor='" . $row->Motor . "'";
+			$sql.= ", id_tipo_vehiculo='" . $row->id_tipo_vehiculo . "'";
+			$sql.= ", modelo='" . $row->Modelo . "'";
+			$sql.= ", marca='" . $row->Marca . "'";
+			$sql.= ", nro_chasis='" . $row->Chasis . "'";
+			$sql.= ", id_dependencia=" . $row->id_dependencia . "";
+			$sql.= ", id_depositario=" . $row->id_dependencia . "";
+			$sql.= ", id_responsable='1'";
+			$sql.= ", id_parque='1'";
+			$sql.= ", total='0'";
+			$sql.= ", estado='S'";
+			
+			$this->mysqli->query($sql);
+		}
+	}
+
+  }
   
   
   public function calcular_estados($id_movimiento = null, $id_entsal = null) {
@@ -60,7 +100,13 @@ class class_Vehiculo extends class_Base
   	if (! is_null($id_movimiento)) {
 	  	$sql = "SELECT id_movimiento, SUM(total) AS total FROM reparacion WHERE id_movimiento=" . $id_movimiento . " GROUP BY id_movimiento";
 	  	$rs = $this->mysqli->query($sql);
-	  	$row = $rs->fetch_object();
+	  	if ($rs->num_rows == 0) {
+	  		$row = new stdClass;
+	  		$row->total = 0;
+	  		
+	  	} else {
+	  		$row = $rs->fetch_object();
+	  	}
 	  	
 	  	$sql = "UPDATE movimiento SET total='" . $row->total . "' WHERE id_movimiento=" . $id_movimiento;
 	  	$this->mysqli->query($sql);

@@ -213,6 +213,24 @@ qx.Class.define("vehiculos.Application",
         doc.add(win);
         win.center();
         win.open();
+        
+        
+        	/*
+			var rpc = new vehiculos.comp.rpc.Rpc("services/", "comp.Vehiculo");
+			rpc.setTimeout(1000 * 60);
+			rpc.addListener("completed", function(e){
+				var data = e.getData();
+				
+				alert("completed");
+			}, this);
+			rpc.addListener("failed", function(e){
+				var data = e.getData();
+				
+				alert(qx.lang.Json.stringify(data, null, 2));
+			}, this);
+			
+			rpc.callAsyncListeners(true, "pasar");
+			*/
       });
       mnuEdicion.addSeparator();
       mnuEdicion.add(btnParamet);
