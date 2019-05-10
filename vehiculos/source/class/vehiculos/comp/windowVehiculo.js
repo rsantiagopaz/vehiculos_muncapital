@@ -147,7 +147,7 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 		if (lstVehiculo.isSelectionEmpty()) {
 			this.setCaption("Nuevo vehículo");
 			
-			datos = {id_vehiculo: "0", nro_patente: "", marca: "", id_tipo_vehiculo: null, modelo: "", nro_motor: "", nro_chasis: "", observa: "", nro_poliza: "", localidad_id: null, id_dependencia: null, id_depositario: null, id_responsable: null, cboLocalidad: "", cboDependencia: "", cboDepositario: "", cboResponsable: ""};
+			datos = {id_vehiculo: "0", nro_patente: "", marca: "", id_tipo_vehiculo: "1", modelo: "", nro_motor: "", nro_chasis: "", observa: "", nro_poliza: "", localidad_id: null, id_dependencia: null, id_depositario: null, id_responsable: null, cboLocalidad: "", cboDependencia: "", cboDepositario: "", cboResponsable: ""};
 			
 			cboDependencia.removeAll();
 			cboDependencia.setValue("");
@@ -169,10 +169,9 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 			
 			rpc.callAsyncListeners(true, "preparar_foto", p);
 			
+			modelForm = qx.data.marshal.Json.createModel(datos, true);
+			controllerFormInfoVehiculo.setModel(modelForm);
 		}
-		
-		modelForm = qx.data.marshal.Json.createModel(datos, true);
-		controllerFormInfoVehiculo.setModel(modelForm);
 	}, this);
 	var popupVehiculo = cboVehiculo.getChildControl("popup");
 	popupVehiculo.addListener("disappear", function(e){
@@ -233,6 +232,8 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 			rpc.callAsyncListeners(true, "preparar_foto", p);
 		}
 		
+		//alert(qx.lang.Json.stringify(datos, null, 2));
+		
 		modelForm = qx.data.marshal.Json.createModel(datos, true);
 		controllerFormInfoVehiculo.setModel(modelForm);
 	}, this);
@@ -262,21 +263,26 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 	formInfoVehiculo.add(txtNro_patente, "Nro.patente", null, "nro_patente", null, {tabIndex: 3, item: {row: 1, column: 1, colSpan: 4}});
 	
 	
-	aux = new qx.ui.form.TextField();
-	aux.setRequired(true);
-	aux.addListener("blur", function(e){
-		var value = this.getValue();
-		this.setValue((value == null) ? "" : value.trim());
-	});
-	formInfoVehiculo.add(aux, "Nro.chasis", null, "nro_chasis", null, {item: {row: 2, column: 1, colSpan: 6}});
-	
-	
 	var aux = new qx.ui.form.TextField();
 	aux.addListener("blur", function(e){
 		var value = this.getValue();
 		this.setValue((value == null) ? "" : value.trim());
 	});
-	formInfoVehiculo.add(aux, "Marca", null, "marca", null, {item: {row: 3, column: 1, colSpan: 8}});
+	formInfoVehiculo.add(aux, "Marca", null, "marca", null, {item: {row: 2, column: 1, colSpan: 8}});
+	
+	
+	aux = new qx.ui.form.TextField();
+	aux.addListener("blur", function(e){
+		var value = this.getValue();
+		this.setValue((value == null) ? "" : value.trim());
+	});
+	formInfoVehiculo.add(aux, "Modelo (año)", null, "modelo", null, {item: {row: 3, column: 1, colSpan: 2}});
+	
+	
+
+	
+	
+
 	
 
 	aux = new qx.ui.form.SelectBox();
@@ -294,12 +300,16 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 	formInfoVehiculo.add(aux, "Tipo", null, "id_tipo_vehiculo", null, {item: {row: 4, column: 1, colSpan: 8}});
 
 	
+
+	
 	aux = new qx.ui.form.TextField();
+	aux.setRequired(true);
 	aux.addListener("blur", function(e){
 		var value = this.getValue();
 		this.setValue((value == null) ? "" : value.trim());
 	});
-	formInfoVehiculo.add(aux, "Modelo (año)", null, "modelo", null, {item: {row: 5, column: 1, colSpan: 2}});
+	formInfoVehiculo.add(aux, "Nro.chasis", null, "nro_chasis", null, {item: {row: 5, column: 1, colSpan: 6}});
+	
 	
 	aux = new qx.ui.form.TextField();
 	aux.addListener("blur", function(e){

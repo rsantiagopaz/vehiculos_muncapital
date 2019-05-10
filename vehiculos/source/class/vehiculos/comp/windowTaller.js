@@ -6,8 +6,8 @@ qx.Class.define("vehiculos.comp.windowTaller",
 	this.base(arguments);
 	
 	this.set({
-		width: 310,
-		height: 200,
+		width: 350,
+		height: 250,
 		showMinimize: false,
 		showMaximize: false,
 		allowMaximize: false,
@@ -35,7 +35,16 @@ qx.Class.define("vehiculos.comp.windowTaller",
 	txtDescrip.addListener("blur", function(e){
 		this.setValue(this.getValue().trim());
 	});
-	form.add(txtDescrip, "Descripción", null, "descrip");
+	form.add(txtDescrip, "Descripción (fantasía)", null, "descrip");
+	
+	var txtRazon = new qx.ui.form.TextField("");
+	txtRazon.setRequired(true);
+	txtRazon.setMinWidth(200);
+	txtRazon.addListener("blur", function(e){
+		this.setValue(this.getValue().trim());
+	});
+	form.add(txtRazon, "Razón social", null, "razon_social");
+	
 	
 	var txtCuit = new qx.ui.form.TextField("");
 	txtCuit.setRequired(true);
@@ -43,6 +52,18 @@ qx.Class.define("vehiculos.comp.windowTaller",
 		this.setValue(this.getValue().trim());
 	});
 	form.add(txtCuit, "CUIT", null, "cuit");
+	
+	
+	var slbCategoria = new qx.ui.form.SelectBox();
+	slbCategoria.add(new qx.ui.form.ListItem("Responsable Inscripto", null, "01"));
+	slbCategoria.add(new qx.ui.form.ListItem("Responsable no Inscripto", null, "02"));
+	slbCategoria.add(new qx.ui.form.ListItem("No Responsable", null, "03"));
+	slbCategoria.add(new qx.ui.form.ListItem("Exento", null, "04"));
+	slbCategoria.add(new qx.ui.form.ListItem("Consumidor Final", null, "05"));
+	slbCategoria.add(new qx.ui.form.ListItem("Monotributo", null, "06"));
+	slbCategoria.add(new qx.ui.form.ListItem("No categorizado", null, "07"));
+	form.add(slbCategoria, "Categoria IVA", null, "categoria_iva");
+	
 	
 	var controllerForm = this.controllerForm = new qx.data.controller.Form(null, form);
 	
@@ -108,7 +129,7 @@ qx.Class.define("vehiculos.comp.windowTaller",
 			if (rowData == null) {
 				this.setCaption("Nuevo taller");
 		
-				aux = qx.data.marshal.Json.createModel({id_taller: "0", descrip: "", cuit: ""}, true);
+				aux = qx.data.marshal.Json.createModel({id_taller: "0", descrip: "", razon_social: "", cuit: "", categoria_iva: "01"}, true);
 				
 				this.controllerForm.setModel(aux);
 			
