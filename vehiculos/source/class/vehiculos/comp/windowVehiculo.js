@@ -147,10 +147,10 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 		if (lstVehiculo.isSelectionEmpty()) {
 			this.setCaption("Nuevo vehículo");
 			
-			datos = {id_vehiculo: "0", nro_patente: "", marca: "", id_tipo_vehiculo: "1", modelo: "", nro_motor: "", nro_chasis: "", observa: "", nro_poliza: "", localidad_id: null, id_dependencia: null, id_depositario: null, id_responsable: null, cboLocalidad: "", cboDependencia: "", cboDepositario: "", cboResponsable: ""};
+			datos = {id_vehiculo: "0", nro_patente: "", marca: "", id_tipo_vehiculo: "1", modelo: "", nro_motor: "", nro_chasis: "", observa: "", nro_poliza: "", localidad_id: null, id_uni_presu: null, id_depositario: null, id_responsable: null, cboLocalidad: "", cboUni_presu: "", cboDepositario: "", cboResponsable: ""};
 			
-			cboDependencia.removeAll();
-			cboDependencia.setValue("");
+			cboUni_presu.removeAll();
+			cboUni_presu.setValue("");
 			
 			cboResponsable.removeAll();
 			cboResponsable.setValue("");
@@ -183,7 +183,7 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 			this.setCaption("Modificar vehículo");
 			datos = lstVehiculo.getSelection()[0].getUserData("datos");
 			datos.vehiculo.cboLocalidad = "";
-			datos.vehiculo.cboDependencia = "";
+			datos.vehiculo.cboUni_presu = "";
 			datos.vehiculo.cboDepositario = "";
 			datos.vehiculo.cboResponsable = "";
 			
@@ -194,11 +194,11 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 				cboLocalidad.add(new qx.ui.form.ListItem(datos.cboLocalidad.label, null, datos.cboLocalidad.model));
 			}
 			
-			if (datos.cboDependencia == null) {
-				cboDependencia.removeAll();
-				cboDependencia.setValue("");
+			if (datos.cboUni_presu == null) {
+				cboUni_presu.removeAll();
+				cboUni_presu.setValue("");
 			} else {
-				cboDependencia.add(new qx.ui.form.ListItem(datos.cboDependencia.label, null, datos.cboDependencia.model));
+				cboUni_presu.add(new qx.ui.form.ListItem(datos.cboUni_presu.label, null, datos.cboUni_presu.model));
 			}
 			
 			if (datos.cboDepositario == null) {
@@ -230,12 +230,14 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 			}, this);
 			
 			rpc.callAsyncListeners(true, "preparar_foto", p);
+			
+			modelForm = qx.data.marshal.Json.createModel(datos, true);
+			controllerFormInfoVehiculo.setModel(modelForm);
 		}
 		
 		//alert(qx.lang.Json.stringify(datos, null, 2));
 		
-		modelForm = qx.data.marshal.Json.createModel(datos, true);
-		controllerFormInfoVehiculo.setModel(modelForm);
+
 	}, this);
 	
 	this.add(new qx.ui.basic.Label("Buscar:"), {left: 55, top: 3});
@@ -344,13 +346,13 @@ qx.Class.define("vehiculos.comp.windowVehiculo",
 	formInfoVehiculo.add(lstLocalidad, "", null, "localidad_id");
 	
 	
-	var cboDependencia = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Vehiculo", methodName: "autocompletarDependencia"});
-	cboDependencia.setRequired(true);
-	formInfoVehiculo.add(cboDependencia, "Dependencia", function(value) {
-		if (lstDependencia.isSelectionEmpty()) throw new qx.core.ValidationError("Validation Error", "Debe seleccionar dependencia");
-	}, "cboDependencia", null, {item: {row: 10, column: 1, colSpan: 13}});
-	var lstDependencia = cboDependencia.getChildControl("list");
-	formInfoVehiculo.add(lstDependencia, "", null, "id_dependencia");
+	var cboUni_presu = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Vehiculo", methodName: "autocompletarUni_presu"});
+	cboUni_presu.setRequired(true);
+	formInfoVehiculo.add(cboUni_presu, "Uni.presu.", function(value) {
+		if (lstUni_presu.isSelectionEmpty()) throw new qx.core.ValidationError("Validation Error", "Debe seleccionar uni.presu.");
+	}, "cboUni_presu", null, {item: {row: 10, column: 1, colSpan: 13}});
+	var lstUni_presu = cboUni_presu.getChildControl("list");
+	formInfoVehiculo.add(lstUni_presu, "", null, "id_uni_presu");
 	
 	
 	var cboDepositario = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Vehiculo", methodName: "autocompletarDepositario"});

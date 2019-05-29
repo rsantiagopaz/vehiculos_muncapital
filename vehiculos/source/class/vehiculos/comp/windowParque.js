@@ -52,13 +52,13 @@ qx.Class.define("vehiculos.comp.windowParque",
 	formInfoVehiculo.add(txtDescrip, "Descripción", null, "descrip", null, {tabIndex: 1, item: {row: 1, column: 1, colSpan: 8}});
 
 	
-	var cboDependencia = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Vehiculo", methodName: "autocompletarDependencia"});
-	cboDependencia.setRequired(true);
-	formInfoVehiculo.add(cboDependencia, "Dependencia", function(value) {
-		if (lstDependencia.isSelectionEmpty()) throw new qx.core.ValidationError("Validation Error", "Debe seleccionar dependencia");
-	}, "cboDependencia", null, {tabIndex: 2, item: {row: 2, column: 1, colSpan: 13}});
-	var lstDependencia = cboDependencia.getChildControl("list");
-	formInfoVehiculo.add(lstDependencia, "", null, "organismo_area_id");
+	var cboUni_presu = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Vehiculo", methodName: "autocompletarUni_presu"});
+	cboUni_presu.setRequired(true);
+	formInfoVehiculo.add(cboUni_presu, "Uni.presu.", function(value) {
+		if (lstUni_presu.isSelectionEmpty()) throw new qx.core.ValidationError("Validation Error", "Debe seleccionar uni.presu.");
+	}, "cboUni_presu", null, {tabIndex: 2, item: {row: 2, column: 1, colSpan: 13}});
+	var lstUni_presu = cboUni_presu.getChildControl("list");
+	formInfoVehiculo.add(lstUni_presu, "", null, "organismo_area_id");
 	
 	var btnAgregar = new qx.ui.form.Button("Agregar");
 	btnAgregar.addListener("execute", function(e){
@@ -71,8 +71,8 @@ qx.Class.define("vehiculos.comp.windowParque",
 				var data = e.getData();
 	
 				txtDescrip.setValue("");
-				cboDependencia.setValue("");
-				lstDependencia.removeAll();
+				cboUni_presu.setValue("");
+				lstUni_presu.removeAll();
 				txtDescrip.focus();
 				
 				functionActualizarTaller(data.result);
@@ -101,7 +101,7 @@ qx.Class.define("vehiculos.comp.windowParque",
 	//Tabla
 
 	var tableModelTaller = new qx.ui.table.model.Simple();
-	tableModelTaller.setColumns(["Descripción", "Dependencia"], ["descrip", "dependencia"]);
+	tableModelTaller.setColumns(["Descripción", "Uni.presu."], ["descrip", "uni_presu"]);
 
 	var custom = {tableColumnModel : function(obj) {
 		return new qx.ui.table.columnmodel.Resize(obj);

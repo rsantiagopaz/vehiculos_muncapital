@@ -1,10 +1,14 @@
 <?php
 
+require_once('Conexion.php');
+
 class class_ControlAcceso
 {
 	protected $mysqli;
 	
 	function __construct() {
+		global $servidor2, $usuario2, $password2, $base2;
+		
 		require('Conexion.php');
 		
 		//session_unset();

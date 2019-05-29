@@ -38,20 +38,20 @@ qx.Class.define("vehiculos.comp.windowChofer",
 		if (lstChofer.isSelectionEmpty()) {
 			this.setCaption("Nuevo chofer");
 			
-			datos = {id_chofer: "0", dni: "", apenom: "", domicilio: "", email: "", observa: "", telefono: "", cboDependencia: "", organismo_area_id: null, licencia_oficial: "S", id_tipo: "1", id_categoria: "1", clase: "", situacion: "", f_emision: null, f_vencimiento: null};
+			datos = {id_chofer: "0", dni: "", apenom: "", domicilio: "", email: "", observa: "", telefono: "", cboUni_presu: "", organismo_area_id: null, licencia_oficial: "S", id_tipo: "1", id_categoria: "1", clase: "", situacion: "", f_emision: null, f_vencimiento: null};
 			
-			cboDependencia.removeAll();
-			cboDependencia.setValue("");
+			cboUni_presu.removeAll();
+			cboUni_presu.setValue("");
 		} else {
 			this.setCaption("Modificar chofer");
 			datos = lstChofer.getSelection()[0].getUserData("datos");
-			datos.chofer.cboDependencia = "";
+			datos.chofer.cboUni_presu = "";
 			
-			if (datos.cboDependencia == null) {
-				cboDependencia.removeAll();
-				cboDependencia.setValue("");
+			if (datos.cboUni_presu == null) {
+				cboUni_presu.removeAll();
+				cboUni_presu.setValue("");
 			} else {
-				cboDependencia.add(new qx.ui.form.ListItem(datos.cboDependencia.label, null, datos.cboDependencia.model));
+				cboUni_presu.add(new qx.ui.form.ListItem(datos.cboUni_presu.label, null, datos.cboUni_presu.model));
 			}
 			
 			datos = datos.chofer;
@@ -134,13 +134,13 @@ qx.Class.define("vehiculos.comp.windowChofer",
 	form.add(aux, "Teléfono", null, "telefono", null, {item: {row: 6, column: 1, colSpan: 6}});
 	
 	
-	var cboDependencia = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Vehiculo", methodName: "autocompletarDependencia"});
-	//cboDependencia.setRequired(true);
-	form.add(cboDependencia, "Dependencia", function(value) {
-		//if (lstDependencia.isSelectionEmpty()) throw new qx.core.ValidationError("Validation Error", "Debe seleccionar dependencia");
-	}, "cboDependencia", null, {item: {row: 7, column: 1, colSpan: 13}});
-	var lstDependencia = cboDependencia.getChildControl("list");
-	form.add(lstDependencia, "", null, "organismo_area_id");
+	var cboUni_presu = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Vehiculo", methodName: "autocompletarUni_presu"});
+	//cboUni_presu.setRequired(true);
+	form.add(cboUni_presu, "Uni.presu.", function(value) {
+		//if (lstUni_presu.isSelectionEmpty()) throw new qx.core.ValidationError("Validation Error", "Debe seleccionar uni.presu.");
+	}, "cboUni_presu", null, {item: {row: 7, column: 1, colSpan: 13}});
+	var lstUni_presu = cboUni_presu.getChildControl("list");
+	form.add(lstUni_presu, "", null, "organismo_area_id");
 	
 	form.addGroupHeader("Licencia de conducir", {item: {row: 8, column: 0, colSpan: 5}});
 	

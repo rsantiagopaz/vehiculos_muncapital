@@ -36,7 +36,7 @@ qx.Class.define("vehiculos.comp.windowEntTaller",
 
 	form.add(cboTaller, "Taller", function(value) {
 		if (lstTaller.isSelectionEmpty()) throw new qx.core.ValidationError("Validation Error", "Debe seleccionar taller");
-	}, "id_taller", null, {grupo: 1, item: {row: 1, column: 1, colSpan: 11}});
+	}, "id_proveedor", null, {grupo: 1, item: {row: 1, column: 1, colSpan: 11}});
 	
 	var txtObserva = new qx.ui.form.TextArea("");
 	txtObserva.setRequired(true);
@@ -58,7 +58,7 @@ qx.Class.define("vehiculos.comp.windowEntTaller",
 			var p = {};
 			p.id_vehiculo = vehiculo.id_vehiculo;
 			p.id_entsal = rowDataEntSal.id_entsal;
-			p.id_taller = lstTaller.getModelSelection().getItem(0);
+			p.id_proveedor = lstTaller.getModelSelection().getItem(0);
 			p.observa = txtObserva.getValue();
 			p.entsal_estado = rowDataEntSal.estado;
 			

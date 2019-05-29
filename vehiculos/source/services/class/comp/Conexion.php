@@ -1,10 +1,12 @@
 <?php
 
+global $servidor, $usuario, $password, $base, $inventario, $servidor2, $usuario2, $password2, $base2;
 
 $servidor = "localhost";
 $usuario = "root";
 $password = "";
 $base = "vehiculos_muncapital";
+$inventario = "inventario_muncapital";
 
 
 $servidor2 = "localhost";
@@ -13,30 +15,20 @@ $password2 = "";
 $base2 = "vehiculos_muncapital";
 
 
-$servidor3 = "localhost";
-$usuario3 = "root";
-$password3 = "";
-$base3 = "inventario_muncapital";
-
 
 
 /*
 $servidor = "localhost";
-$usuario = "UD330550";
-$password = "U@P330551";
+$usuario = "UD330850";
+$password = "P@s330851";
 $base = "vehiculos";
+$inventario = "inventario";
 
 
 $servidor2 = "172.16.1.251";
-$usuario2 = "UD330550";
-$password2 = "U@P330551";
+$usuario2 = "UD330850";
+$password2 = "P@s330851";
 $base2 = "intranet";
-
-
-$servidor3 = "localhost";
-$usuario3 = "UD330650";
-$password3 = "U@Q330651";
-$base3 = "inventario";
 */
 
 ?>

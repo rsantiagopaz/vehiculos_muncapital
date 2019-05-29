@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require("Base.php");
+require_once("Base.php");
 
 class class_Responsable extends class_Base
 {

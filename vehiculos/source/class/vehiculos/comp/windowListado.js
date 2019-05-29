@@ -42,7 +42,7 @@ qx.Class.define("vehiculos.comp.windowListado",
 		var data = e.getData();
 		
 		if (data) {
-			cboDependencia.setEnabled(true);
+			cboUni_presu.setEnabled(true);
 			slbTipo_vehiculo.setEnabled(false);
 			cboDepartamento.setEnabled(false);
 			cboResponsable.setEnabled(false);
@@ -62,7 +62,7 @@ qx.Class.define("vehiculos.comp.windowListado",
 		var data = e.getData();
 
 		if (data) {
-			cboDependencia.setEnabled(true);
+			cboUni_presu.setEnabled(true);
 			slbTipo_vehiculo.setEnabled(true);
 			cboDepartamento.setEnabled(true);
 			cboResponsable.setEnabled(false);
@@ -81,7 +81,7 @@ qx.Class.define("vehiculos.comp.windowListado",
 		var data = e.getData();
 		
 		if (data) {
-			cboDependencia.setEnabled(false);
+			cboUni_presu.setEnabled(false);
 			slbTipo_vehiculo.setEnabled(false);
 			cboDepartamento.setEnabled(false);
 			cboResponsable.setEnabled(true);
@@ -96,10 +96,10 @@ qx.Class.define("vehiculos.comp.windowListado",
 	
 	
 	
-	composite.add(new qx.ui.basic.Label("Dependencia: "), {row: 0, column: 2});
-	var cboDependencia = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Vehiculo", methodName: "autocompletarDependencia"});
-	var lstDependencia = cboDependencia.getChildControl("list");
-	composite.add(cboDependencia, {row: 0, column: 3, colSpan: 3});
+	composite.add(new qx.ui.basic.Label("Uni.presu.: "), {row: 0, column: 2});
+	var cboUni_presu = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Vehiculo", methodName: "autocompletarUni_presu"});
+	var lstUni_presu = cboUni_presu.getChildControl("list");
+	composite.add(cboUni_presu, {row: 0, column: 3, colSpan: 3});
 	
 	
 	
@@ -180,8 +180,8 @@ qx.Class.define("vehiculos.comp.windowListado",
 			txt = "?rutina=responsables";
 		}
 		
-		if (cboDependencia.getEnabled()) {
-			if (! lstDependencia.isSelectionEmpty()) txt+= "&id_dependencia=" + lstDependencia.getModelSelection().getItem(0);
+		if (cboUni_presu.getEnabled()) {
+			if (! lstUni_presu.isSelectionEmpty()) txt+= "&id_uni_presu=" + lstUni_presu.getModelSelection().getItem(0);
 		}
 		if (slbTipo_vehiculo.getEnabled()) {
 			aux = slbTipo_vehiculo.getModelSelection().getItem(0);
@@ -215,7 +215,7 @@ qx.Class.define("vehiculos.comp.windowListado",
 	rbtA1.setTabIndex(1);
 	rbtA2.setTabIndex(2);
 	rbtA3.setTabIndex(3);
-	cboDependencia.setTabIndex(4);
+	cboUni_presu.setTabIndex(4);
 	slbTipo_vehiculo.setTabIndex(5);
 	cboDepartamento.setTabIndex(6);
 	cboResponsable.setTabIndex(7);

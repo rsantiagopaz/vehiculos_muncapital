@@ -537,7 +537,7 @@ qx.Class.define("vehiculos.comp.pageParticular",
 	aux.setReadOnly(true);
 	aux.setDecorator("main");
 	aux.setBackgroundColor("#ffffc0");
-	formInfoVehiculo.add(aux, "Dependencia", null, "dependencia");
+	formInfoVehiculo.add(aux, "Uni.presu.", null, "uni_presu");
 	
 	aux = new qx.ui.form.TextField();
 	aux.setReadOnly(true);
@@ -710,7 +710,7 @@ qx.Class.define("vehiculos.comp.pageParticular",
 	//Tabla
 
 	var tableModelMovimiento = new qx.ui.table.model.Simple();
-	tableModelMovimiento.setColumns(["#", "Taller", "Entrada", "Salida", "Km", "Asunto", "Total", "bandera_estado"], ["id_movimiento", "taller", "f_ent", "f_sal", "kilo", "documentacion_id", "total", "bandera_estado"]);
+	tableModelMovimiento.setColumns(["#", "Taller", "Entrada", "Salida", "Km", "Asunto", "Total", "bandera_estado"], ["id_movimiento", "proveedor", "f_ent", "f_sal", "kilo", "documentacion_id", "total", "bandera_estado"]);
 	tableModelMovimiento.setColumnSortable(0, false);
 	tableModelMovimiento.setColumnSortable(1, false);
 	tableModelMovimiento.setColumnSortable(2, false);

@@ -1,48 +1,9 @@
 <?php
 
-require("Base.php");
+require_once("Base.php");
 
 class class_Parametros extends class_Base
 {
-	
-	
-	
-  public function method_alta_modifica_taller($params, $error) {
-  	$p = $params[0];
-  	
-  	$sql = "SELECT id_taller FROM taller WHERE descrip='" . $p->model->descrip . "' AND id_taller <> " . $p->model->id_taller;
-  	$rs = $this->mysqli->query($sql);
-  	if ($rs->num_rows > 0) {
-  		$error->SetError(0, "descrip");
-  		return $error;
-  	}
-  	$sql = "SELECT id_taller FROM taller WHERE cuit='" . $p->model->cuit . "' AND id_taller <> " . $p->model->id_taller;
-  	$rs = $this->mysqli->query($sql);
-  	if ($rs->num_rows > 0) {
-  		$error->SetError(0, "cuit");
-  		return $error;
-  	}
-  	
-	$id_taller = $p->model->id_taller;
-	
-	$set = $this->prepararCampos($p->model, "taller");
-		
-	if ($id_taller == "0") {
-		$sql = "INSERT taller SET " . $set;
-		$this->mysqli->query($sql);
-		
-		$id_taller = $this->mysqli->insert_id;
-		
-		$this->auditoria($sql, $id_taller, "insert_taller");
-	} else {
-		$sql = "UPDATE taller SET " . $set . " WHERE id_taller=" . $id_taller;
-		$this->mysqli->query($sql);
-		
-		$this->auditoria($sql, $id_taller, "update_taller");
-	}
-	
-	return $id_taller;
-  }
 
 
   public function method_autocompletarTipoReparacion($params, $error) {
@@ -54,26 +15,28 @@ class class_Parametros extends class_Base
   
   
   public function method_autocompletarTaller($params, $error) {
+  	global $inventario;
+  	
   	$p = $params[0];
   	
 	if (is_numeric($p->texto)) {
 		$sql = "SELECT";
-		$sql.= "  id_taller AS model";
+		$sql.= "  id_proveedor AS model";
 		$sql.= ", CONCAT(cuit, ' (', descrip, ')') AS label";
 		$sql.= ", cuit";
 		$sql.= ", descrip";
-		$sql.= " FROM taller";
+		$sql.= " FROM " . $inventario . ".proveedor";
 		$sql.= " WHERE cuit LIKE '" . $p->texto . "%'";
 		$sql.= " ORDER BY label";
 	} else {
 		$sql = "SELECT * FROM (";
 			$sql.= "(";
 				$sql.= "SELECT";
-				$sql.= "  id_taller AS model";
+				$sql.= "  id_proveedor AS model";
 				$sql.= ", CONCAT(descrip, ' (', cuit, ')') AS label";
 				$sql.= ", cuit";
 				$sql.= ", descrip";
-				$sql.= " FROM taller";
+				$sql.= " FROM " . $inventario . ".proveedor";
 			$sql.= ") UNION (";
 				$sql.= "SELECT";
 				$sql.= "  0 AS model";
@@ -91,24 +54,26 @@ class class_Parametros extends class_Base
   
   
   public function method_autocompletarRazonSocial($params, $error) {
+  	global $inventario;
+  	
   	$p = $params[0];
   	
 	if (is_numeric($p->texto)) {
 		$sql = "SELECT";
-		$sql.= "  id_taller AS model";
+		$sql.= "  id_proveedor AS model";
 		$sql.= ", CONCAT(cuit, ' (', descrip, ')') AS label";
 		$sql.= ", cuit";
 		$sql.= ", descrip";
-		$sql.= " FROM taller";
+		$sql.= " FROM " . $inventario . ".proveedor";
 		$sql.= " WHERE cuit LIKE '" . $p->texto . "%'";
 		$sql.= " ORDER BY label";
 	} else {
 		$sql = "SELECT";
-		$sql.= "  id_taller AS model";
+		$sql.= "  id_proveedor AS model";
 		$sql.= ", CONCAT(descrip, ' (', cuit, ')') AS label";
 		$sql.= ", cuit";
 		$sql.= ", descrip";
-		$sql.= " FROM taller";
+		$sql.= " FROM " . $inventario . ".proveedor";
 		$sql.= " WHERE descrip LIKE '%" . $p->texto . "%'";
 		$sql.= " ORDER BY label";
 	}
@@ -119,9 +84,11 @@ class class_Parametros extends class_Base
   
   
   public function method_leer_taller($params, $error) {
+  	global $inventario;
+  	
   	$p = $params[0];
   	
-	$sql = "SELECT * FROM taller WHERE id_taller=" . $p->id_taller;
+	$sql = "SELECT * FROM " . $inventario . ".proveedor WHERE id_proveedor=" . $p->id_proveedor;
 	$rs = $this->mysqli->query($sql);
 	$row = $rs->fetch_object();
 	
@@ -130,13 +97,15 @@ class class_Parametros extends class_Base
   
   
   public function method_agregar_taller($params, $error) {
+  	global $inventario;
+  	
   	$p = $params[0];
   	
-	$sql = "INSERT taller SET descrip='" . $p->descrip . "', cuit='" . $p->cuit . "'";
+	$sql = "INSERT " . $inventario . ".proveedor SET descrip='" . $p->descrip . "', cuit='" . $p->cuit . "'";
 	$this->mysqli->query($sql);
-	$id_taller = $this->mysqli->insert_id;
+	$id_proveedor = $this->mysqli->insert_id;
 	
-	$this->auditoria($sql, $id_taller, "insert_taller");
+	$this->auditoria($sql, $id_proveedor, "insert_proveedor");
   }
   
   
@@ -167,12 +136,12 @@ class class_Parametros extends class_Base
 		$sql.= " FROM (_organismos_areas INNER JOIN _organismos USING(organismo_id))";
 		$sql.= " WHERE _organismos_areas.organismo_area_id='" . $row->organismo_area_id . "'";
 		
-		$rsDependencia = $this->mysqli2->query($sql);
-		if ($rsDependencia->num_rows > 0) {
-			$rowDependencia = $rsDependencia->fetch_object();
-			$row->dependencia = $rowDependencia->label;
+		$rsUni_presu = $this->mysqli2->query($sql);
+		if ($rsUni_presu->num_rows > 0) {
+			$rowUni_presu = $rsUni_presu->fetch_object();
+			$row->uni_presu = $rowUni_presu->label;
 		} else {
-			$row->dependencia = "";
+			$row->uni_presu = "";
 		}
 		
 		$resultado[] = $row;

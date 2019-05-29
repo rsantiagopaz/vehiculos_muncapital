@@ -1,6 +1,6 @@
 <?php
 
-require("Base.php");
+require_once("Base.php");
 
 class class_Vehiculo extends class_Base
 {
@@ -14,8 +14,7 @@ class class_Vehiculo extends class_Base
 	
 	$rs = $this->mysqli->query($sql);
 	while ($row = $rs->fetch_object()) {
-		$row->id_dependencia = (int) $row->id_dependencia;
-		//if ($row->id_dependencia > 0) $row->id_dependencia = "'" . $row->id_dependencia . "'"; else $row->id_dependencia = "NULL";
+		$row->id_uni_presu = (int) $row->id_uni_presu;
 		
 		$row->Dominio = trim($row->Dominio);
 		$row->Motor = trim($row->Motor);
@@ -24,7 +23,7 @@ class class_Vehiculo extends class_Base
 		$row->Chasis = trim($row->Chasis);
 		
 		
-		if (! empty($row->Dominio) && $row->id_dependencia > 0) {
+		if (! empty($row->Dominio) && $row->id_uni_presu > 0) {
 			$sql = "INSERT prueba.vehiculo SET";
 			$sql.= "  nro_patente='" . $row->Dominio . "'";
 			$sql.= ", nro_motor='" . $row->Motor . "'";
@@ -32,8 +31,8 @@ class class_Vehiculo extends class_Base
 			$sql.= ", modelo='" . $row->Modelo . "'";
 			$sql.= ", marca='" . $row->Marca . "'";
 			$sql.= ", nro_chasis='" . $row->Chasis . "'";
-			$sql.= ", id_dependencia=" . $row->id_dependencia . "";
-			$sql.= ", id_depositario=" . $row->id_dependencia . "";
+			$sql.= ", id_uni_presu=" . $row->id_uni_presu . "";
+			$sql.= ", id_depositario=" . $row->id_uni_presu . "";
 			$sql.= ", id_responsable='1'";
 			$sql.= ", id_parque='1'";
 			$sql.= ", total='0'";
@@ -227,7 +226,7 @@ class class_Vehiculo extends class_Base
   	if ($rowEntsal->estado == $p->entsal_estado) {
 		$this->mysqli->query("START TRANSACTION");
 	
-		$sql = "INSERT movimiento SET id_entsal=" . $p->id_entsal . ", id_taller=" . $p->id_taller . ", observa='" . $p->observa . "', f_ent=NOW(), id_usuario_ent='" . $_SESSION['login']->usuario . "', estado='E'";
+		$sql = "INSERT movimiento SET id_entsal=" . $p->id_entsal . ", id_proveedor=" . $p->id_proveedor . ", observa='" . $p->observa . "', f_ent=NOW(), id_usuario_ent='" . $_SESSION['login']->usuario . "', estado='E'";
 		$this->mysqli->query($sql);
 		$insert_id = $this->mysqli->insert_id;
 		
@@ -272,21 +271,23 @@ class class_Vehiculo extends class_Base
   
   
   public function method_leer_movimiento($params, $error) {
+  	global $inventario;
+  	
   	$p = $params[0];
   	
   	$resultado = array();
   	
 
 	$sql = "SELECT * FROM (";
-	$sql.= "(SELECT movimiento.*, taller.descrip AS taller FROM movimiento LEFT JOIN taller USING(id_taller))";
+	$sql.= "(SELECT movimiento.*, proveedor.descrip AS proveedor FROM movimiento INNER JOIN " . $inventario . ".proveedor USING(id_proveedor))";
 	$sql.= " UNION ALL";
-	$sql.= "(SELECT movimiento.*, temporal_1.descrip AS taller FROM movimiento INNER JOIN ";
+	$sql.= "(SELECT movimiento.*, temporal_1.descrip AS proveedor FROM movimiento INNER JOIN ";
 		$sql.= "(";
 		$sql.= "SELECT";
-		$sql.= "  0 AS id_taller";
+		$sql.= "  0 AS id_proveedor";
 		$sql.= ", 'Parque Automotor' AS descrip";
 		$sql.= ") AS temporal_1";
-	$sql.= " USING(id_taller))";
+	$sql.= " USING(id_proveedor))";
 	$sql.= ") AS temporal_2";
 	$sql.= " WHERE id_entsal=" . $p->id_entsal;
 	$sql.= " ORDER BY f_ent DESC";
@@ -401,6 +402,8 @@ class class_Vehiculo extends class_Base
   
   
   public function method_leer_vehiculo($params, $error) {
+  	global $inventario;
+  	
 	$p = $params[0];
 
 	$resultado = array();
@@ -429,15 +432,15 @@ class class_Vehiculo extends class_Base
 		
 		$sql = "SELECT";
 		$sql.= " descrip AS label";
-		$sql.= " FROM dependencia";
-		$sql.= " WHERE id_dependencia='" . $row->id_dependencia . "'";
+		$sql.= " FROM " . $inventario . ".uni_presu";
+		$sql.= " WHERE id_uni_presu='" . $row->id_uni_presu . "'";
 		
-		$rsDependencia = $this->mysqli->query($sql);
-		if ($rsDependencia->num_rows > 0) {
-			$rowDependencia = $rsDependencia->fetch_object();
-			$row->dependencia = $rowDependencia->label;
+		$rsUni_presu = $this->mysqli->query($sql);
+		if ($rsUni_presu->num_rows > 0) {
+			$rowUni_presu = $rsUni_presu->fetch_object();
+			$row->uni_presu = $rowUni_presu->label;
 		} else {
-			$row->dependencia = "";
+			$row->uni_presu = "";
 		}
 		
 		
@@ -542,6 +545,8 @@ class class_Vehiculo extends class_Base
   
   
   public function method_leer_gral($params, $error) {
+  	global $inventario;
+  	
   	$p = $params[0];
   	
   	$resultado = new stdClass;
@@ -552,7 +557,7 @@ class class_Vehiculo extends class_Base
   	$asu = 0;
   	$dif = 0;
  	
-	$sql = "SELECT id_entsal, id_dependencia, nro_patente, CONCAT(nro_patente, '  ', marca) AS vehiculo, f_ent, f_sal, asunto, entsal.estado, entsal.diferido FROM entsal INNER JOIN vehiculo USING(id_vehiculo) WHERE vehiculo.id_parque=" . $_SESSION['parque']->id_parque . " AND entsal.estado<>'A' AND (entsal.estado='E' OR entsal.estado='T' OR entsal.asunto OR entsal.diferido) ORDER BY f_ent DESC";
+	$sql = "SELECT id_entsal, id_uni_presu, nro_patente, CONCAT(nro_patente, '  ', marca) AS vehiculo, f_ent, f_sal, asunto, entsal.estado, entsal.diferido FROM entsal INNER JOIN vehiculo USING(id_vehiculo) WHERE vehiculo.id_parque=" . $_SESSION['parque']->id_parque . " AND entsal.estado<>'A' AND (entsal.estado='E' OR entsal.estado='T' OR entsal.asunto OR entsal.diferido) ORDER BY f_ent DESC";
 	$rs = $this->mysqli->query($sql);
 	while ($row = $rs->fetch_object()) {
 		$row->asunto = (bool) $row->asunto;
@@ -560,15 +565,15 @@ class class_Vehiculo extends class_Base
 		
 		$sql = "SELECT";
 		$sql.= "  descrip AS label";
-		$sql.= " FROM dependencia";
-		$sql.= " WHERE id_dependencia='" . $row->id_dependencia . "'";
+		$sql.= " FROM " . $inventario . ".uni_presu";
+		$sql.= " WHERE id_uni_presu='" . $row->id_uni_presu . "'";
 		
-		$rsDependencia = $this->mysqli->query($sql);
-		if ($rsDependencia->num_rows > 0) {
-			$rowDependencia = $rsDependencia->fetch_object();
-			$row->dependencia = $rowDependencia->label;
+		$rsUni_presu = $this->mysqli->query($sql);
+		if ($rsUni_presu->num_rows > 0) {
+			$rowUni_presu = $rsUni_presu->fetch_object();
+			$row->uni_presu = $rowUni_presu->label;
 		} else {
-			$row->dependencia = "";
+			$row->uni_presu = "";
 		}
 		
 		if ($row->estado == 'E') $ent+= 1;
@@ -588,7 +593,7 @@ class class_Vehiculo extends class_Base
 		} else if ($p->ver == "Diferido" && $row->diferido) {
 			$resultado->gral[] = $row;
 		} else if (is_numeric($p->ver)) {
-			$sql = "SELECT id_movimiento FROM movimiento WHERE id_entsal=" . $row->id_entsal . " AND estado <> 'A' AND id_taller=" . $p->ver;
+			$sql = "SELECT id_movimiento FROM movimiento WHERE id_entsal=" . $row->id_entsal . " AND estado <> 'A' AND id_proveedor=" . $p->ver;
 			$rsMovimiento = $this->mysqli->query($sql);
 			if ($rsMovimiento->num_rows > 0) $resultado->gral[] = $row;
 		}
@@ -691,12 +696,12 @@ class class_Vehiculo extends class_Base
 		$sql.= " FROM (_organismos_areas INNER JOIN _organismos USING(organismo_id))";
 		$sql.= " WHERE _organismos_areas.organismo_area_id='" . $row->organismo_area_id . "'";
 		
-		$rsDependencia = $this->mysqli2->query($sql);
-		if ($rsDependencia->num_rows > 0) {
-			$rowDependencia = $rsDependencia->fetch_object();
-			$row->dependencia = $rowDependencia->label;
+		$rsUni_presu = $this->mysqli2->query($sql);
+		if ($rsUni_presu->num_rows > 0) {
+			$rowUni_presu = $rsUni_presu->fetch_object();
+			$row->uni_presu = $rowUni_presu->label;
 		} else {
-			$row->dependencia = "";
+			$row->uni_presu = "";
 		}
 		
 		$resultado[] = $row;
@@ -719,6 +724,8 @@ class class_Vehiculo extends class_Base
   
   
   public function method_autocompletarVehiculoCompleto($params, $error) {
+  	global $inventario;
+  	
   	$p = $params[0];
   	
   	$resultado = array();
@@ -752,12 +759,12 @@ class class_Vehiculo extends class_Base
 		
 		$sql = "SELECT";
 		$sql.= "  descrip AS label";
-		$sql.= "  , id_dependencia AS model";
-		$sql.= " FROM dependencia";
-		$sql.= " WHERE id_dependencia='" . $row->id_dependencia . "'";
+		$sql.= "  , id_uni_presu AS model";
+		$sql.= " FROM " . $inventario . ".uni_presu";
+		$sql.= " WHERE id_uni_presu='" . $row->id_uni_presu . "'";
 		
 		$rsAux = $this->mysqli->query($sql);
-		if ($rsAux->num_rows > 0) $rowAux->cboDependencia = $rsAux->fetch_object();
+		if ($rsAux->num_rows > 0) $rowAux->cboUni_presu = $rsAux->fetch_object();
 		
 		
 		
@@ -797,10 +804,12 @@ class class_Vehiculo extends class_Base
   }
   
   
-  public function method_autocompletarDependencia($params, $error) {
+  public function method_autocompletarUni_presu($params, $error) {
+  	global $inventario;
+  	
   	$p = $params[0];
 	
-	$sql = "SELECT id_dependencia AS model, descrip AS label FROM dependencia WHERE descrip LIKE'%" . $p->texto . "%' ORDER BY label";
+	$sql = "SELECT id_uni_presu AS model, descrip AS label FROM " . $inventario . ".uni_presu WHERE descrip LIKE'%" . $p->texto . "%' ORDER BY label";
 	
 	return $this->toJson($this->mysqli->query($sql));
   }

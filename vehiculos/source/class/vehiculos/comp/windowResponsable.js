@@ -40,23 +40,10 @@ qx.Class.define("vehiculos.comp.windowResponsable",
 			this.setCaption("Nuevo responsable");
 			
 			datos = {id_responsable: "0", apenom: "", dni: "", domicilio: "", localidad: "", telefono: "", cargo: "", organizacion: ""};
-			
-			//cboDependencia.removeAll();
-			//cboDependencia.setValue("");
+
 		} else {
 			this.setCaption("Modificar responsable");
 			datos = lstBuscar.getSelection()[0].getUserData("datos");
-			
-			/*
-			datos.chofer.cboDependencia = "";
-
-			if (datos.cboDependencia == null) {
-				cboDependencia.removeAll();
-				cboDependencia.setValue("");
-			} else {
-				cboDependencia.add(new qx.ui.form.ListItem(datos.cboDependencia.label, null, datos.cboDependencia.model));
-			}
-			*/
 			
 			datos = datos.responsable;
 		}

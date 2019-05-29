@@ -1,12 +1,14 @@
 <?php
 
+require_once('Conexion.php');
+
 class class_Base
 {
 	protected $mysqli;
 	protected $mysqli2;
 	
 	function __construct() {
-		require('Conexion.php');
+		global $servidor, $usuario, $password, $base, $inventario, $servidor2, $usuario2, $password2, $base2;
 		
 		set_time_limit(0);
 		

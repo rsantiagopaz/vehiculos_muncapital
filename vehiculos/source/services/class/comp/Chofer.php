@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require("Base.php");
+require_once("Base.php");
 
 class class_Chofer extends class_Base
 {
@@ -128,8 +128,8 @@ class class_Chofer extends class_Base
 		$sql.= " FROM (_organismos_areas INNER JOIN _organismos USING(organismo_id))";
 		$sql.= " WHERE _organismos_areas.organismo_area_id='" . $row->organismo_area_id . "'";
 		
-		$rsDependencia = $this->mysqli2->query($sql);
-		if ($rsDependencia->num_rows > 0) $rowAux->cboDependencia = $rsDependencia->fetch_object();
+		$rsUni_presu = $this->mysqli2->query($sql);
+		if ($rsUni_presu->num_rows > 0) $rowAux->cboUni_presu = $rsUni_presu->fetch_object();
 
 		$row = $rowAux;
 		

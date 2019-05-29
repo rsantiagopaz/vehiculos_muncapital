@@ -244,7 +244,7 @@ qx.Class.define("vehiculos.comp.pageGeneral",
 	//Tabla
 
 	var tableModelGral = new qx.ui.table.model.Simple();
-	tableModelGral.setColumns(["Vehículo", "Dependencia", "Entrada", "Salida", "Estado", "Asunto", "Diferido"], ["vehiculo", "dependencia", "f_ent", "f_sal", "estado", "asunto", "diferido"]);
+	tableModelGral.setColumns(["Vehículo", "Uni.presu.", "Entrada", "Salida", "Estado", "Asunto", "Diferido"], ["vehiculo", "uni_presu", "f_ent", "f_sal", "estado", "asunto", "diferido"]);
 	tableModelGral.setColumnSortable(0, false);
 	tableModelGral.setColumnSortable(1, false);
 	tableModelGral.setColumnSortable(2, false);
