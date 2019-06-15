@@ -807,6 +807,9 @@ case "salida_vehiculo" : {
 	<body>
 	<input type="submit" value="Imprimir" onClick="window.print();"/>
 	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
+	<tr><td rowspan="3"><img src="../../../resource/vehiculos/logo.jpg" width="70"></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td>&nbsp;</td></tr>
 	<tr><td align="center" colspan="6"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td align="center" colspan="6"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
@@ -951,6 +954,9 @@ case "entrada_taller" : {
 	<body>
 	<input type="submit" value="Imprimir" onClick="window.print();"/>
 	<table border="0" cellpadding="0" cellspacing="0" width="800" align="center">
+	<tr><td rowspan="3"><img src="../../../resource/vehiculos/logo.jpg" width="70"></td></tr>
+	<tr><td>&nbsp;</td></tr>
+	<tr><td>&nbsp;</td></tr>
 	<tr><td align="center" colspan="6"><big><b>Dirección de Compras - Parque Automotor</b></big></td></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td align="center" colspan="6"><big><b>Municipalidad de Santiago del Estero</b></big></td></tr>
