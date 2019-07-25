@@ -324,7 +324,7 @@ class class_Vehiculo extends class_Base
 	  	
 	  	$this->auditoria($sql, $p->id_vehiculo, "update_vehiculo");
 	  	
-	  	$sql = "INSERT entsal SET id_vehiculo=" . $p->id_vehiculo . ", observa='" . $p->observa . "', f_ent=NOW(), id_usuario_ent='" . $_SESSION['login']->usuario . "', resp_ent='" . $p->resp_ent . "', kilo=" . $p->kilo . ", cod_up=" . $p->cod_up . ", asunto=FALSE, diferido=FALSE, estado='E'";
+	  	$sql = "INSERT entsal SET id_vehiculo=" . $p->id_vehiculo . ", observa='" . $p->observa . "', f_ent=NOW(), id_usuario_ent='" . $_SESSION['login']->usuario . "', resp_ent='" . $p->resp_ent . "', kilo=" . $p->kilo . ", cod_up=" . $p->cod_up . ", documentacion_id='" . $p->documentacion_id . "', asunto=FALSE, diferido=FALSE, estado='E'";
 	  	$this->mysqli->query($sql);
 	  	$insert_id = $this->mysqli->insert_id;
 	  	
@@ -603,8 +603,33 @@ class class_Vehiculo extends class_Base
 	
 	return $resultado;
   }
+
+
+
+  public function method_leer_asunto($params, $error) {
+  	//global $servidor2, $usuario2, $password2, $base2;
+  	
+  	$p = $params[0];
+  	
+	//$mysqli2 = new mysqli("$servidor2", "$usuario2", "$password2", "$base2");
+	$this->mysqli2->query("SET NAMES 'utf8'");
+
+	$sql = "SELECT 001_documentaciones.*, 001_documentaciones_tipos.documentacion_tipo FROM 001_documentaciones INNER JOIN 001_documentaciones_tipos USING(documentacion_tipo_id) WHERE documentacion_id='" . $p->documentacion_id . "'";
+	$rs = $this->mysqli2->query($sql);
+	if ($rs->num_rows == 0) {
+  		$error->SetError(0, "documentacion_id");
+  		return $error;
+	} else {
+		$row = $rs->fetch_object();
+		$documento = (($row->documentacion_tipo_id=="1") ? $row->expediente_numero . "-" . $row->expediente_codigo . "-" . $row->expediente_ano : $row->documentacion_numero . "/" . $row->documentacion_numero_ano);
+		$documento = $row->documentacion_tipo . " Nro. " . $documento;
+		$row->documento = $documento;
+		
+		return $row;
+	}
+  }  
   
-  
+  /*
   public function method_leer_asunto($params, $error) {
   	$p = $params[0];
 
@@ -622,6 +647,7 @@ class class_Vehiculo extends class_Base
 		return $row;
 	}
   }
+  */
   
   
   public function method_agregar_foto_comodato($params, $error) {

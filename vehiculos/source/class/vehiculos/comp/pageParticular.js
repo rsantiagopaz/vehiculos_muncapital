@@ -90,7 +90,8 @@ qx.Class.define("vehiculos.comp.pageParticular",
 					
 					btnInfoVehiculo.setEnabled(true);
 					btnHistorial.setEnabled(true);
-					btnEnt.setEnabled(vehiculo.estado == "S");
+					//btnEnt.setEnabled(vehiculo.estado == "S");
+					btnEnt.setEnabled(true);
 					
 					functionActualizarEntSal(id_entsal, id_movimiento);
 					
@@ -397,12 +398,13 @@ qx.Class.define("vehiculos.comp.pageParticular",
 	//Tabla
 
 	var tableModelEntsal = new qx.ui.table.model.Simple();
-	tableModelEntsal.setColumns(["Entrada", "Salida", "Unidad presup.", "Km", "Total", "bandera_estado"], ["f_ent", "f_sal", "unipresu", "kilo", "total", "bandera_estado"]);
+	tableModelEntsal.setColumns(["Entrada", "Salida", "Unidad presup.", "Km", "Asunto", "Total", "bandera_estado"], ["f_ent", "f_sal", "unipresu", "kilo", "documentacion_id", "total", "bandera_estado"]);
 	tableModelEntsal.setColumnSortable(0, false);
 	tableModelEntsal.setColumnSortable(1, false);
 	tableModelEntsal.setColumnSortable(2, false);
 	tableModelEntsal.setColumnSortable(3, false);
 	tableModelEntsal.setColumnSortable(4, false);
+	tableModelEntsal.setColumnSortable(5, false);
 
 	var custom = {tableColumnModel : function(obj) {
 		return new qx.ui.table.columnmodel.Resize(obj);
@@ -415,7 +417,7 @@ qx.Class.define("vehiculos.comp.pageParticular",
 	tblEntsal.toggleStatusBarVisible();
 	
 	var tableColumnModelEntsal = tblEntsal.getTableColumnModel();
-	tableColumnModelEntsal.setColumnVisible(5, false);
+	tableColumnModelEntsal.setColumnVisible(6, false);
 	
 	
 	var cellrendererDate = new qx.ui.table.cellrenderer.Date();
@@ -438,7 +440,7 @@ qx.Class.define("vehiculos.comp.pageParticular",
 			return cellrendererNumber;
 		}
 	});
-	tableColumnModelEntsal.setDataCellRenderer(4, cellrendererDynamic);
+	tableColumnModelEntsal.setDataCellRenderer(5, cellrendererDynamic);
 	
 	var selectionModelEntsal = tblEntsal.getSelectionModel();
 	selectionModelEntsal.setSelectionMode(qx.ui.table.selection.Model.SINGLE_SELECTION);
@@ -823,6 +825,27 @@ qx.Class.define("vehiculos.comp.pageParticular",
 	var btnAsunto = new qx.ui.form.Button("Asunto...");
 	btnAsunto.setEnabled(false);
 	btnAsunto.addListener("execute", function(e){
+		(new dialog.Confirm({
+		        "message"   : "Desea asignar el asunto " + rowDataEntSal.documentacion_id + " al movimiento seleccionado?",
+		        "callback"  : function(e){
+		        					if (e) {
+										var p = {};
+										p.id_movimiento = rowDataMovimiento.id_movimiento;
+										p.documentacion_id = rowDataEntSal.documentacion_id;
+										
+										var rpc = new vehiculos.comp.rpc.Rpc("services/", "comp.Vehiculo");
+										rpc.addListener("completed", function(e){
+											functionActualizarMovimiento(rowDataMovimiento.id_movimiento);
+										});
+										rpc.callAsyncListeners(true, "asignar_asunto", p);
+		        					}
+		        				},
+		        "context"   : this,
+		        "image"     : "icon/48/status/dialog-warning.png"
+		})).show();
+		
+		
+		/*
 		var win = new vehiculos.comp.windowAsunto(rowDataMovimiento);
 		win.addListener("aceptado", function(e){
 			functionActualizarMovimiento(rowDataMovimiento.id_movimiento);
@@ -837,6 +860,7 @@ qx.Class.define("vehiculos.comp.pageParticular",
 		blocker.block();
 		win.center();
 		win.open();
+		*/
 	});
 	gbxMovimiento.add(btnAsunto, {row: 0, column: 0});
 	

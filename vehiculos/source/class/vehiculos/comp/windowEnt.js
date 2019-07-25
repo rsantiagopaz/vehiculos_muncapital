@@ -7,8 +7,8 @@ qx.Class.define("vehiculos.comp.windowEnt",
 	
 	this.set({
 		caption: "Entrada",
-		width: 400,
-		height: 300,
+		width: 500,
+		height: 370,
 		showMinimize: false,
 		showMaximize: false,
 		allowMaximize: false,
@@ -42,16 +42,66 @@ qx.Class.define("vehiculos.comp.windowEnt",
 	txtKilo.setPageStep(0);
 	form.add(txtKilo, "Kilometraje", null, "kilo", null, {grupo: 1, item: {row: 1, column: 1, colSpan: 4}});
 	
+	
+	var txtAsunto_cargo = new qx.ui.form.TextField("");
+	//txtAsunto_cargo.setWidth(500);
+	txtAsunto_cargo.asunto = false;
+	txtAsunto_cargo.addListener("blur", function(e){
+		this.setValue(this.getValue().trim());
+		
+		var p = {};
+		p.documentacion_id = txtAsunto_cargo.getValue();
+		
+		var rpc = new vehiculos.comp.rpc.Rpc("services/", "comp.Vehiculo");
+		rpc.mostrar = false;
+		rpc.addListener("completed", function(e){
+			var data = e.getData();
+
+			var aux = "";
+			
+			aux = "Documento: " + data.result.documento;
+			aux+= String.fromCharCode(13) + "Iniciador: " + data.result.documentacion_tmp_iniciador;
+			aux+= String.fromCharCode(13) + "Texto: " + data.result.documentacion_asunto;
+			
+			txtAsunto_descrip.setValue(aux);
+			
+			txtAsunto_cargo.asunto = true;
+
+		}, this);
+		rpc.addListener("failed", function(e){
+			var data = e.getData();
+			
+			txtAsunto_descrip.setValue("");
+			
+			txtAsunto_cargo.asunto = false;
+
+		}, this);
+		rpc.callAsyncListeners(true, "leer_asunto", p);
+	});
+	form.add(txtAsunto_cargo, "Asunto", function(value) {
+		if (! txtAsunto_cargo.asunto) throw new qx.core.ValidationError("Validation Error", "Asunto inválido");
+	}, "documentacion_id", null, {grupo: 1, item: {row: 2, column: 1, colSpan: 5}});
+	
+	
+	var txtAsunto_descrip = new qx.ui.form.TextArea("");
+	//txtAsunto_descrip.setRich(true);
+	txtAsunto_descrip.setReadOnly(true);
+	txtAsunto_descrip.setDecorator("main");
+	txtAsunto_descrip.setBackgroundColor("#ffffc0");
+	//this.add(txtAsunto_descrip, {left: 240, top: 0, right: 0});
+	form.add(txtAsunto_descrip, "", null, "asunto_descrip", null, {grupo: 1, item: {row: 3, column: 1, colSpan: 11}});
+	
+	
 	var txtResp_ent = new qx.ui.form.TextField("");
 	txtResp_ent.setEnabled(false);
-	form.add(txtResp_ent, "Responsable", null, "resp_ent", null, {grupo: 1, item: {row: 2, column: 1, colSpan: 11}});
+	//form.add(txtResp_ent, "Responsable", null, "resp_ent", null, {grupo: 1, item: {row: 2, column: 1, colSpan: 11}});
 	
 	var txtObserva_ent = new qx.ui.form.TextArea("");
 	txtObserva_ent.setRequired(true);
 	txtObserva_ent.addListener("blur", function(e){
 		this.setValue(this.getValue().trim());
 	});
-	form.add(txtObserva_ent, "Observaciones", null, "observa_ent", null, {grupo: 1, item: {row: 3, column: 1, colSpan: 11, rowSpan: 17}});
+	form.add(txtObserva_ent, "Observaciones", null, "observa_ent", null, {grupo: 1, item: {row: 4, column: 1, colSpan: 11, rowSpan: 17}});
 	
 	var cboUnipresu = new componente.comp.ui.ramon.combobox.ComboBoxAuto({url: "services/", serviceName: "comp.Vehiculo", methodName: "autocompletarUnipresu"});
 	cboUnipresu.setEnabled(false);
@@ -67,7 +117,7 @@ qx.Class.define("vehiculos.comp.windowEnt",
 		}
 		*/
 	}, this);
-	form.add(cboUnipresu, "Unidad presup.", null, "cod_up", null, {grupo: 1, item: {row: 20, column: 1, colSpan: 11}});
+	//form.add(cboUnipresu, "Unidad presup.", null, "cod_up", null, {grupo: 1, item: {row: 20, column: 1, colSpan: 11}});
 
 	
 
@@ -76,7 +126,13 @@ qx.Class.define("vehiculos.comp.windowEnt",
 	
 	var formView = new componente.comp.ui.ramon.abstractrenderer.Grid(form, 20, 20, 1);
 	//var formView = new qx.ui.form.renderer.Single(form);
-	this.add(formView, {left: 0, top: 0});
+	this.add(formView, {left: 0, top: 15});
+	
+	
+	
+
+	
+	
 	
 	
 	var btnAceptar = new qx.ui.form.Button("Aceptar");
@@ -87,6 +143,7 @@ qx.Class.define("vehiculos.comp.windowEnt",
 			p.resp_ent = txtResp_ent.getValue();
 			p.kilo = txtKilo.getValue();
 			p.observa = txtObserva_ent.getValue();
+			p.documentacion_id = txtAsunto_cargo.getValue();
 			p.cod_up = ((lstUnipresu.isSelectionEmpty()) ? 0 : lstUnipresu.getSelection()[0].getModel());
 			p.vehiculo_estado = vehiculo.estado;
 			
@@ -120,11 +177,11 @@ qx.Class.define("vehiculos.comp.windowEnt",
 	this.add(btnAceptar, {left: "20%", bottom: 0});
 	this.add(btnCancelar, {right: "20%", bottom: 0});
 	
+	btnAceptar.setTabIndex(6);
+	btnCancelar.setTabIndex(7);
+	
 	},
-	members : 
-	{
 
-	},
 	events : 
 	{
 		"aceptado": "qx.event.type.Event",

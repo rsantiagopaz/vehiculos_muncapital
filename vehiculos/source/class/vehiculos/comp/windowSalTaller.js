@@ -285,7 +285,7 @@ qx.Class.define("vehiculos.comp.windowSalTaller",
 	
 	this.add(btnAceptar, {left: "35%", bottom: 0});
 	this.add(btnCancelar, {right: "35%", bottom: 0});
-	this.add(btnDiferir, {right: "5%", bottom: 0});
+	//this.add(btnDiferir, {right: "5%", bottom: 0});
 	
 	
 	txtKilo.setTabIndex(1);
